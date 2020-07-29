@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Đăng ký tài khoản</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/css/style.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+	<link href="https://fonts.googleapis.com/css2?family=Play&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Itim|Lobster|Montserrat:500|Noto+Serif|Nunito|Patrick+Hand|Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i|Roboto+Slab|Saira" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>	
+</head>
+<body>
+	<div class="container-fluid">
+		<div id="login">
+			<div class="container">
+				<div id="login-row" class="row justify-content-center align-items-center">
+					<div id="login-column" class="col-md-6">
+						<div id="login-box1" class="col-md-12">
+							<form id="login-form" class="form" th:action="@{/login_register}" th:object="${accountForm}" method="post">
+								<h3 class="text-center text-info-label" style="font-family: 'Notable', sans-serif; margin-top: 15px;">Đăng ký tài khoản</h3>
+								<div class="form-group">
+									<label for="username" class="text-info-label">Tài khoản:</label><br>
+									<input type="text" th:field="*{userName}" class="form-control">
+									<span class="error-form" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></span>
+								</div>
+								<div class="form-group">
+									<label for="password" class="text-info-label">Mật khẩu:</label><br>
+									<input type="password" th:field="*{password}" class="form-control">
+									<span class="error-form" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+								</div>
+								<div class="form-group">
+									<label for="password" class="text-info-label">Nhập lại mật khẩu:</label><br>
+									<input type="password" th:field="*{passwordConfirm}" class="form-control">
+									<span class="error-form" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></span>
+								</div>
+								<div class="form-group">
+									<label for="username" class="text-info-label">Email:</label><br>
+									<input type="text" th:field="*{emailUser}" class="form-control">
+									<span class="error-form" th:if="${#fields.hasErrors('emailUser')}" th:errors="*{emailUser}"></span>
+								</div>
+								<div class="form-group">
+									<input type="submit" name="submit" class="btn btn-dark btn-md" value="Tạo tài khoản">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
