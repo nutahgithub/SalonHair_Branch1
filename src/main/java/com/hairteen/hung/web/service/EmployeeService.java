@@ -16,4 +16,6 @@ public interface EmployeeService {
     Employee getOneEmployeeByID(Integer id);
 
     void saveEmployee(EmployeeForm employeeForm);
+
+    void editEmployee(EmployeeForm employeeForm);
 }

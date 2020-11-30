@@ -40,6 +40,7 @@
 			var $datepicker = $('#editEmployeeModal #datepicker');
 			
 			$.get(href,function(employee,status){
+				$('#editEmployeeModal #idEmployee').val(employee.idEmployee);
 				$('#editEmployeeModal #nameEmployee').val(employee.nameEmployee);
 				if(employee.sex == 1){
 					$('#editEmployeeModal #radio_male').attr('checked',true);
@@ -185,7 +186,7 @@
 						<div class="form-group">
 							<label>Ngày sinh: </label>
 							<div id="datepicker" class="input-group date" data-date-format="dd-mm-yyyy"> 
-								<input class="form-control" readonly th:field="*{birthday}" type="text"> <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span> 
+								<input class="form-control" maxlength="10" th:field="*{birthday}" type="text"> <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span> 
 							</div>
 							<span class="error-form" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></span>
 						</div>
@@ -221,7 +222,8 @@
 	<div id="editEmployeeModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form th:action="@{/employee_edit}" th:object="${employeeForm}" method="post">
+					<input type="hidden" id="idEmployee" th:field="*{idEmployee}">
 					<div class="modal-header">
 						<h4 class="modal-title">Chỉnh sửa nhân viên</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -229,38 +231,38 @@
 					<div class="modal-body">
 						<div class="form-group">
 							<label class="label-modal">Họ và Tên:</label>
-							<input type="text" id="nameEmployee" class="form-control" required>
+							<input type="text" id="nameEmployee" th:field="*{nameEmployee}" class="form-control" required>
 						</div>
 						<div class="form-group">
 							<label>Giới tính: </label>
 							<div class="radio">
-								<label><input type="radio" id="radio_male" name="optradio" checked>Nam</label>
+								<label><input type="radio" id="radio_male" th:field="*{sex}" value="1" name="optradio">Nam</label>
 							</div>
 							<div class="radio">
-								<label><input type="radio" id="radio_female" name="optradio">Nữ</label>
+								<label><input type="radio" id="radio_female" th:field="*{sex}" value="0" name="optradio">Nữ</label>
 							</div>
 						</div>
 						<div class="form-group">
 							<label>Ngày sinh: </label>
 							<div id="datepicker" class="input-group date" data-date-format="dd-mm-yyyy"> 
-								<input class="form-control" readonly type="text"> <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span> 
+								<input class="form-control" maxlength="10" th:field="*{birthday}" type="text"> <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span> 
 							</div>
 						</div>
 						<div class="form-group">
 							<label>Địa chỉ:</label>
-							<textarea class="form-control" id="address" required></textarea>
+							<textarea class="form-control" th:field="*{address}" id="address" required></textarea>
 						</div>
 						<div class="form-group">
 							<label>Điện thoại:</label>
-							<input type="text" class="form-control" id="phone" required>
+							<input type="text" class="form-control" th:field="*{phone}" id="phone" required>
 						</div>
 						<div class="form-group">
 							<label>Email:</label>
-							<input type="text" class="form-control" id="email" required>
+							<input type="text" class="form-control" th:field="*{email}" id="email" required>
 						</div>
 						<div class="form-group">
 							<label>Lương cơ bản:</label>
-							<input type="number" class="form-control" id="basicSalary" required>
+							<input type="number" class="form-control" th:field="*{basicSalary}" id="basicSalary" required>
 						</div>
 					</div>
 					<div class="modal-footer">

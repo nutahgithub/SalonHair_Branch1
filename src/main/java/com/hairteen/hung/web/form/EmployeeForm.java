@@ -2,8 +2,16 @@ package com.hairteen.hung.web.form;
 
 public class EmployeeForm {
 
+	private Integer idEmployee;
     private String nameEmployee;
-    private Integer sex;
+    public Integer getIdEmployee() {
+		return idEmployee;
+	}
+	public void setIdEmployee(Integer idEmployee) {
+		this.idEmployee = idEmployee;
+	}
+
+	private Integer sex;
     private String birthday;
     private String address;
     private String phone;
@@ -55,9 +63,10 @@ public class EmployeeForm {
 
     public EmployeeForm() {}
 
-    public EmployeeForm(String nameEmployee, Integer sex, String birthday, String address, String phone, String email,
+    public EmployeeForm(Integer idEmployee, String nameEmployee, Integer sex, String birthday, String address, String phone, String email,
             String basicSalary) {
         super();
+        this.idEmployee = idEmployee;
         this.nameEmployee = nameEmployee;
         this.sex = sex;
         this.birthday = birthday;

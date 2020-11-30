@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.service;
+package com.hairteen.hung.web.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.hairteen.hung.web.entity.Employee;
 import com.hairteen.hung.web.form.EmployeeForm;
 import com.hairteen.hung.web.respository.EmployeeRespository;
+import com.hairteen.hung.web.service.EmployeeService;
 import com.hairteen.hung.web.utils.ConstantDefine;
 
 @Service
@@ -73,4 +74,21 @@ public class EmployeeServiceImpl implements EmployeeService{
             e.printStackTrace();
         }
     }
+
+	@Override
+	public void editEmployee(EmployeeForm employeeForm) {
+		Date date = new Date();
+        Date birthDate;
+        try {
+            birthDate = new SimpleDateFormat("dd-MM-yyyy").parse(employeeForm.getBirthday());
+            Float basicSalary = Float.parseFloat(employeeForm.getBasicSalary());
+            Integer id = employeeForm.getIdEmployee();
+
+            employeeRespository.save(new Employee(id, employeeForm.getNameEmployee(),
+                    employeeForm.getSex(), birthDate, employeeForm.getAddress(), employeeForm.getPhone(),
+                    employeeForm.getEmail(), basicSalary, AccountServiceImpl.FULL_NAME, date, null, null, null, null));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+	}
 }

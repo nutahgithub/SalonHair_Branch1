@@ -118,6 +118,41 @@ public class EmployeeController {
     }
 
     /**
+     * Do employee register.
+     * @param model
+     * @param employeeForm
+     * @return
+     */
+    @RequestMapping(value = "/employee_edit", method = RequestMethod.POST)
+    public String employeeEdit(Model model,
+            @ModelAttribute("employeeForm") @Validated EmployeeForm employeeForm,
+            BindingResult result, RedirectAttributes redirectAttributes) {
+
+        // Validate result
+        if (result.hasErrors()) {
+            // Get list employee pages
+            Page<Employee> employeePages = employeeService.getEmployeePage(1);
+            int totalPages = employeePages.getTotalPages();
+
+            if (totalPages > 0) {
+                // Create List page
+                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+                model.addAttribute("pageNumbers", pageNumbers);
+            }
+
+            model.addAttribute("modalFlag", 1);
+            model.addAttribute("employeeForm", employeeForm);
+            model.addAttribute("employeePages", employeePages);
+            return "employee";
+        }
+
+        employeeService.editEmployee(employeeForm);
+        return "redirect:/manager_employee_view?pageId=1";
+    }
+
+    /**
      * Get Employee by ID (popup edit).
      * @param id
      * @return

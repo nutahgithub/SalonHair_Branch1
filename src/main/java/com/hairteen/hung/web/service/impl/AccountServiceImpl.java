@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.service;
+package com.hairteen.hung.web.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +17,7 @@ import com.hairteen.hung.web.entity.Account;
 import com.hairteen.hung.web.form.AccountForm;
 import com.hairteen.hung.web.respository.AccountRespository;
 import com.hairteen.hung.web.respository.AccountRespositoryCustom;
+import com.hairteen.hung.web.service.AccountService;
 import com.hairteen.hung.web.utils.EncrytedPasswordUtils;
 
 @Service
