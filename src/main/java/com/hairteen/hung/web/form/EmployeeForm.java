@@ -2,21 +2,21 @@ package com.hairteen.hung.web.form;
 
 public class EmployeeForm {
 
-	private Integer idEmployee;
+    private Integer idEmployee;
     private String nameEmployee;
-    public Integer getIdEmployee() {
-		return idEmployee;
-	}
-	public void setIdEmployee(Integer idEmployee) {
-		this.idEmployee = idEmployee;
-	}
-
-	private Integer sex;
+    private Integer sex;
     private String birthday;
     private String address;
     private String phone;
     private String email;
     private String basicSalary;
+
+    public Integer getIdEmployee() {
+        return idEmployee;
+    }
+    public void setIdEmployee(Integer idEmployee) {
+        this.idEmployee = idEmployee;
+    }
 
     public String getNameEmployee() {
         return nameEmployee;
