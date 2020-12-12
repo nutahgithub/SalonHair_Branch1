@@ -30,6 +30,8 @@
 			if (modalFlag == 1) {
 				console.log('Da vao');
 				$('#addEmployeeModal').modal('show');
+			} else if (modalFlag == 2) {
+				$('#editEmployeeModal').modal('show');
 			}
 		});
 
@@ -55,6 +57,19 @@
 			});
 
 			$('#editEmployeeModal').modal();
+		});
+		
+		$('.table1 .delete').on('click',function(event){
+			
+			event.preventDefault();
+			var href = $(this).attr('href');
+
+			$.get(href,function(employee,status){
+				$('#deleteEmployeeModal #idEmployeeD').val(employee.idEmployee);
+				$('#deleteEmployeeModal #nameEmployeeD').val(employee.nameEmployee);
+			});
+
+			$('#deleteEmployeeModal').modal();
 		});
 		
 		// Select/Deselect checkboxes
@@ -101,47 +116,49 @@
 						</div>
 						<div class="col-sm-6">
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm nhân viên</span></a>
-							<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Xóa</span></a>
+							<!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Xóa</span></a> -->
 						</div>
 					</div>
 				</div>
 				<table class="table1 table-striped table-hover">
 					<thead>
 						<tr>
-							<th>
+							<!-- <th>
 								<span class="custom-checkbox">
 									<input type="checkbox" id="selectAll">
 									<label for="selectAll"></label>
 								</span>
-							</th>
-							<th>Tên</th>
+							</th> -->
+							<th>Stt</th>
+							<th>Họ và Tên</th>
 							<th>Giới tính</th>
 							<th>Ngày sinh</th>
 							<th>Địa chỉ</th>
 							<th>Điện thoại</th>
-							<th>Email</th>
+							<!-- <th>Email</th> -->
 							<th>Lương CB</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each ="employee : ${employeePages.content}">
-							<td>
+							<!-- <td>
 								<span class="custom-checkbox">
 									<input type="checkbox" id="checkbox1" name="options[]" value="1">
 									<label for="checkbox1"></label>
 								</span>
-							</td>
+							</td> -->
+							<td th:utext="${employeeStat.index + 1}"></td>
 							<td th:utext="${employee.nameEmployee}"></td>
 							<td th:utext="${employee.sex == 1}? 'Nam': 'Nu'"></td>
 							<td th:utext="${#dates.format(employee.birthday,'dd-MM-yyyy')}"></td>
 							<td th:utext="${employee.address}"></td>
 							<td th:utext="${employee.phone}"></td>
-							<td th:utext="${employee.email}"></td>
+							<!-- <td th:utext="${employee.email}"></td> -->
 							<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(employee.basicSalary), '.00', ''), '$', '')}"></td>
 							<td>
 								<a th:href="@{findOne/(id=${employee.idEmployee})}" class="edit"><i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i></a>
+								<a th:href="@{findOne/(id=${employee.idEmployee})}" class="delete"><i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i></a>
 							</td>
 						</tr>
 					</tbody>
@@ -175,11 +192,15 @@
 						</div>
 						<div class="form-group">
 							<label>Giới tính: </label>
-							<div class="radio">
-								<label><input type="radio" name="optradio" th:field="*{sex}" value="1" checked>Nam</label>
+							<div class="radio custom-control custom-radio custom-control-inline">
+								<label class="btn btn-default form-check-label">
+									<input class="form-check-input" type="radio" name="optradio" th:field="*{sex}" value="1" checked>Nam
+								</label>
 							</div>
-							<div class="radio">
-								<label><input type="radio" name="optradio" th:field="*{sex}" value="0">Nữ</label>
+							<div class="radio custom-control custom-radio custom-control-inline">
+								<label class="btn btn-default form-check-label">
+									<input class="form-check-input" type="radio" name="optradio" th:field="*{sex}" value="0">Nữ
+								</label>
 							</div>
 							<span class="error-form" th:if="${#fields.hasErrors('sex')}" th:errors="*{sex}"></span>
 						</div>
@@ -193,6 +214,7 @@
 						<div class="form-group">
 							<label>Địa chỉ:</label>
 							<textarea class="form-control" th:field="*{address}"></textarea>
+							<span class="error-form" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
 						</div>
 						<div class="form-group">
 							<label>Điện thoại:</label>
@@ -211,8 +233,8 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-success" value="Add">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-success" value="Thêm">
 					</div>
 				</form>
 			</div>
@@ -222,7 +244,7 @@
 	<div id="editEmployeeModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form th:action="@{/employee_edit}" th:object="${employeeForm}" method="post">
+				<form th:action="@{/employee_edit}" th:object="${employeeEditForm}" method="post">
 					<input type="hidden" id="idEmployee" th:field="*{idEmployee}">
 					<div class="modal-header">
 						<h4 class="modal-title">Chỉnh sửa nhân viên</h4>
@@ -231,43 +253,50 @@
 					<div class="modal-body">
 						<div class="form-group">
 							<label class="label-modal">Họ và Tên:</label>
-							<input type="text" id="nameEmployee" th:field="*{nameEmployee}" class="form-control" required>
+							<input type="text" id="nameEmployee" th:field="*{nameEmployee}" class="form-control">
+							<span class="error-form" th:if="${#fields.hasErrors('nameEmployee')}" th:errors="*{nameEmployee}"></span>
 						</div>
 						<div class="form-group">
 							<label>Giới tính: </label>
-							<div class="radio">
+							<div class="radio custom-control custom-radio custom-control-inline">
 								<label><input type="radio" id="radio_male" th:field="*{sex}" value="1" name="optradio">Nam</label>
 							</div>
-							<div class="radio">
+							<div class="radio custom-control custom-radio custom-control-inline">
 								<label><input type="radio" id="radio_female" th:field="*{sex}" value="0" name="optradio">Nữ</label>
 							</div>
+							<span class="error-form" th:if="${#fields.hasErrors('sex')}" th:errors="*{sex}"></span>
 						</div>
 						<div class="form-group">
 							<label>Ngày sinh: </label>
 							<div id="datepicker" class="input-group date" data-date-format="dd-mm-yyyy"> 
 								<input class="form-control" maxlength="10" th:field="*{birthday}" type="text"> <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span> 
 							</div>
+							<span class="error-form" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></span>
 						</div>
 						<div class="form-group">
 							<label>Địa chỉ:</label>
-							<textarea class="form-control" th:field="*{address}" id="address" required></textarea>
+							<textarea class="form-control" th:field="*{address}" id="address"></textarea>
+							<span class="error-form" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
 						</div>
 						<div class="form-group">
 							<label>Điện thoại:</label>
-							<input type="text" class="form-control" th:field="*{phone}" id="phone" required>
+							<input type="text" class="form-control" th:field="*{phone}" id="phone">
+							<span class="error-form" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
 						</div>
 						<div class="form-group">
 							<label>Email:</label>
-							<input type="text" class="form-control" th:field="*{email}" id="email" required>
+							<input type="text" class="form-control" th:field="*{email}" id="email">
+							<span class="error-form" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 						</div>
 						<div class="form-group">
 							<label>Lương cơ bản:</label>
-							<input type="number" class="form-control" th:field="*{basicSalary}" id="basicSalary" required>
+							<input type="number" class="form-control" th:field="*{basicSalary}" id="basicSalary">
+							<span class="error-form" th:if="${#fields.hasErrors('basicSalary')}" th:errors="*{basicSalary}"></span>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-info" value="Save">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-info" value="Lưu">
 					</div>
 				</form>
 			</div>
@@ -277,18 +306,20 @@
 	<div id="deleteEmployeeModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form th:action="@{/employee_delete}" th:object="${employeeForm}" method="post">
+					<input type="hidden" id="idEmployeeD" th:field="*{idEmployee}">
 					<div class="modal-header">
 						<h4 class="modal-title">Xóa nhân viên</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
 						<p>Bạn muốn xóa nhân viên?</p>
+						<p id="nameEmployeeD"></p>
 						<p class="text-warning"><small>Hành động này không thể khôi phục!</small></p>
 					</div>
 					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-danger" value="Delete">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-danger" value="Xóa">
 					</div>
 				</form>
 			</div>

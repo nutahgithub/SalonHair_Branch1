@@ -6,6 +6,8 @@ import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,8 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.hairteen.hung.web.entity.Employee;
+import com.hairteen.hung.web.form.EmployeeEditForm;
 import com.hairteen.hung.web.form.EmployeeForm;
 import com.hairteen.hung.web.service.EmployeeService;
+import com.hairteen.hung.web.utils.ConstantDefine;
 import com.hairteen.hung.web.validator.EmployeeValidator;
 
 @Controller
@@ -78,6 +82,7 @@ public class EmployeeController {
         }
 
         model.addAttribute("employeeForm", new EmployeeForm());
+        model.addAttribute("employeeEditForm", new EmployeeEditForm());
         model.addAttribute("employeePages", employeePages);
         return "employee";
     }
@@ -93,40 +98,8 @@ public class EmployeeController {
             @ModelAttribute("employeeForm") @Validated EmployeeForm employeeForm,
             BindingResult result, RedirectAttributes redirectAttributes) {
 
-        // Validate result
-        if (result.hasErrors()) {
-            // Get list employee pages
-            Page<Employee> employeePages = employeeService.getEmployeePage(1);
-            int totalPages = employeePages.getTotalPages();
-
-            if (totalPages > 0) {
-                // Create List page
-                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-                model.addAttribute("pageNumbers", pageNumbers);
-            }
-
-            model.addAttribute("modalFlag", 1);
-            model.addAttribute("employeeForm", employeeForm);
-            model.addAttribute("employeePages", employeePages);
-            return "employee";
-        }
-
-        employeeService.saveEmployee(employeeForm);
-        return "redirect:/manager_employee_view?pageId=1";
-    }
-
-    /**
-     * Do employee register.
-     * @param model
-     * @param employeeForm
-     * @return
-     */
-    @RequestMapping(value = "/employee_edit", method = RequestMethod.POST)
-    public String employeeEdit(Model model,
-            @ModelAttribute("employeeForm") @Validated EmployeeForm employeeForm,
-            BindingResult result, RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String user = authentication.getName();
 
         // Validate result
         if (result.hasErrors()) {
@@ -142,13 +115,14 @@ public class EmployeeController {
                 model.addAttribute("pageNumbers", pageNumbers);
             }
 
-            model.addAttribute("modalFlag", 1);
+            model.addAttribute("modalFlag", ConstantDefine.MODAL_DISPLAY_ADD_FLAG);
             model.addAttribute("employeeForm", employeeForm);
+            model.addAttribute("employeeEditForm", new EmployeeEditForm());
             model.addAttribute("employeePages", employeePages);
             return "employee";
         }
 
-        employeeService.editEmployee(employeeForm);
+        employeeService.saveEmployee(employeeForm, user);
         return "redirect:/manager_employee_view?pageId=1";
     }
 

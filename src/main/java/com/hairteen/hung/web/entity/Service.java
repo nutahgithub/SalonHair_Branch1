@@ -1,13 +1,19 @@
 package com.hairteen.hung.web.entity;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "T_SERVICE")
@@ -19,9 +25,6 @@ public class Service {
 
     @Column(name = "NAME_SERVICE")
     private String nameService;
-
-    @Column(name = "ID_SERVICE_TYPE")
-    private Integer idServiceType;
 
     @Column(name = "PRICE_SERVICE")
     private Float priceService;
@@ -56,13 +59,16 @@ public class Service {
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
 
-    public String getNameService() {
-        return nameService;
-    }
+    // Co nhiu service trong service type
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_SERVICE_TYPE", nullable = false)
+    private ServiceType serviceType;
 
-    public void setNameService(String nameService) {
-        this.nameService = nameService;
-    }
+    @OneToMany(mappedBy = "service")
+    private Collection<ServiceHistory> serviceHistorys;
+
+    @Transient
+    private Integer idServiceType;
 
     public Integer getIdServiceType() {
         return idServiceType;
@@ -70,6 +76,26 @@ public class Service {
 
     public void setIdServiceType(Integer idServiceType) {
         this.idServiceType = idServiceType;
+    }
+
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
+
+    public void setIdService(Integer idService) {
+        this.idService = idService;
+    }
+
+    public String getNameService() {
+        return nameService;
+    }
+
+    public void setNameService(String nameService) {
+        this.nameService = nameService;
     }
 
     public Float getPriceService() {
@@ -155,4 +181,57 @@ public class Service {
     public Integer getIdService() {
         return idService;
     }
+
+    public Collection<ServiceHistory> getServiceHistorys() {
+        return serviceHistorys;
+    }
+
+    public void setServiceHistorys(Collection<ServiceHistory> serviceHistorys) {
+        this.serviceHistorys = serviceHistorys;
+    }
+
+    public Service(Integer idService, String nameService, Float priceService, Integer countIn, Integer countOut,
+            Integer countRemain, String registerId, Date registerTsamp, String updateId, Date updateTsamp,
+            String deleteId, Date deleteTsamp, ServiceType serviceType) {
+        super();
+        this.idService = idService;
+        this.nameService = nameService;
+        this.priceService = priceService;
+        this.countIn = countIn;
+        this.countOut = countOut;
+        this.countRemain = countRemain;
+        this.registerId = registerId;
+        this.registerTsamp = registerTsamp;
+        this.updateId = updateId;
+        this.updateTsamp = updateTsamp;
+        this.deleteId = deleteId;
+        this.deleteTsamp = deleteTsamp;
+        this.serviceType = serviceType;
+    }
+
+    public Service(Integer idService, String nameService, Float priceService, Integer countIn, Integer countOut,
+            Integer countRemain, String registerId, Date registerTsamp, String updateId, Date updateTsamp,
+            String deleteId, Date deleteTsamp, Integer idServiceType) {
+        super();
+        this.idService = idService;
+        this.nameService = nameService;
+        this.priceService = priceService;
+        this.countIn = countIn;
+        this.countOut = countOut;
+        this.countRemain = countRemain;
+        this.registerId = registerId;
+        this.registerTsamp = registerTsamp;
+        this.updateId = updateId;
+        this.updateTsamp = updateTsamp;
+        this.deleteId = deleteId;
+        this.deleteTsamp = deleteTsamp;
+        this.idServiceType = idServiceType;
+    }
+
+    public Service(Integer idService) {
+        super();
+        this.idService = idService;
+    }
+
+    public Service() {}
 }

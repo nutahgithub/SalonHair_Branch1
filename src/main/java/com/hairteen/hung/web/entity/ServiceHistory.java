@@ -4,10 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "T_SERVICE_HISTORY")
@@ -17,20 +21,18 @@ public class ServiceHistory {
     @Column(name = "ID_SERVICE_HISTORY")
     private Integer idServiceHistory;
 
-    @Column(name = "ID_SERVICE")
+    //@Column(name = "ID_SERVICE")
+    @Transient
     private Integer idService;
 
-    @Column(name = "COUNT_IN")
-    private Integer countIn;
+    @Column(name = "COUNT_IN_OUT")
+    private Integer countInOut;
 
-    @Column(name = "REASON_IN")
-    private String reasonIn;
+    @Column(name = "REASON_IN_OUT")
+    private String reasonInOut;
 
-    @Column(name = "COUNT_OUT")
-    private Integer countOut;
-
-    @Column(name = "REASON_OUT")
-    private String reasonOut;
+    @Column(name = "STATUS_IN_OUT")
+    private Integer statusInOut;
 
     @Column(name = "REGISTER_ID")
     private String registerId;
@@ -53,44 +55,17 @@ public class ServiceHistory {
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
 
+    // Co nhiu service trong service type
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_SERVICE", nullable = false)
+    private Service service;
+
     public Integer getIdService() {
         return idService;
     }
 
     public void setIdService(Integer idService) {
         this.idService = idService;
-    }
-
-    public Integer getCountIn() {
-        return countIn;
-    }
-
-    public void setCountIn(Integer countIn) {
-        this.countIn = countIn;
-    }
-
-    public String getReasonIn() {
-        return reasonIn;
-    }
-
-    public void setReasonIn(String reasonIn) {
-        this.reasonIn = reasonIn;
-    }
-
-    public Integer getCountOut() {
-        return countOut;
-    }
-
-    public void setCountOut(Integer countOut) {
-        this.countOut = countOut;
-    }
-
-    public String getReasonOut() {
-        return reasonOut;
-    }
-
-    public void setReasonOut(String reasonOut) {
-        this.reasonOut = reasonOut;
     }
 
     public String getRegisterId() {
@@ -143,5 +118,41 @@ public class ServiceHistory {
 
     public Integer getIdServiceHistory() {
         return idServiceHistory;
+    }
+
+    public Integer getCountInOut() {
+        return countInOut;
+    }
+
+    public void setCountInOut(Integer countInOut) {
+        this.countInOut = countInOut;
+    }
+
+    public String getReasonInOut() {
+        return reasonInOut;
+    }
+
+    public void setReasonInOut(String reasonInOut) {
+        this.reasonInOut = reasonInOut;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
+    public void setIdServiceHistory(Integer idServiceHistory) {
+        this.idServiceHistory = idServiceHistory;
+    }
+
+    public Integer getStatusInOut() {
+        return statusInOut;
+    }
+
+    public void setStatusInOut(Integer statusInOut) {
+        this.statusInOut = statusInOut;
     }
 }

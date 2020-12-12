@@ -31,40 +31,46 @@ public class AccountValidator implements Validator{
         AccountForm accountForm = (AccountForm) target;
 
         // Check not input
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "NotEmpty.accountForm.userName");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty.accountForm.password");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm", "NotEmpty.accountForm.passwordConfirm");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailUser", "NotEmpty.accountForm.email");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "AccountForm.userName.NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "AccountForm.password.NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm", "AccountForm.passwordConfirm.NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailUser", "AccountForm.email.NotEmpty");
+
+        // Check Password
+        if (!errors.hasFieldErrors("password")) {
+            if (accountForm.getPassword().length() < 8 || accountForm.getPassword().length() > 255) {
+                errors.rejectValue("password", "AccountForm.password.Pattern");
+            }
+        }
 
         // Check email
-        if(!errors.hasFieldErrors("emailUser")) {
+        if (!errors.hasFieldErrors("emailUser")) {
             if(!this.emailValidator.isValid(accountForm.getEmailUser())) {
                 // Email not valid.
-                errors.rejectValue("emailUser", "Pattern.accountForm.email");
+                errors.rejectValue("emailUser", "AccountForm.email.Pattern");
             } else {
                 Account account = accountService.findUserAccountByEmail(accountForm.getEmailUser(), true);
                 if(account != null) {
                     // Email is exist in DB
-                    errors.rejectValue("emailUser", "Duplicate.accountForm.email");
+                    errors.rejectValue("emailUser", "AccountForm.email.Duplicate");
                 }
             }
         }
 
         // Check User Name
-        if(!errors.hasFieldErrors("userName")) {
+        if (!errors.hasFieldErrors("userName")) {
             Account account = accountService.findUserAccount(accountForm.getUserName(), false);
             if(account != null) {
                 // UserName is exist in DB
-                errors.rejectValue("userName", "Duplicate.accountForm.userName");
+                errors.rejectValue("userName", "AccountForm.userName.Duplicate");
             }
         }
 
         // Check password & passwordConfirm is mapping
         if (!errors.hasErrors()) {
             if (!accountForm.getPasswordConfirm().equals(accountForm.getPassword())) {
-                errors.rejectValue("passwordConfirm", "Match.accountForm.passwordConfirm");
+                errors.rejectValue("passwordConfirm", "AccountForm.passwordConfirm.Match");
             }
         }
     }
-
 }

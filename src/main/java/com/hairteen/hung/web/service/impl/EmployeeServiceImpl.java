@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.hairteen.hung.web.entity.Employee;
+import com.hairteen.hung.web.form.EmployeeEditForm;
 import com.hairteen.hung.web.form.EmployeeForm;
 import com.hairteen.hung.web.respository.EmployeeRespository;
 import com.hairteen.hung.web.service.EmployeeService;
@@ -58,7 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public void saveEmployee(EmployeeForm employeeForm) {
+    public void saveEmployee(EmployeeForm employeeForm, String accountId) {
 
         Date date = new Date();
         Date birthDate;
@@ -69,14 +70,15 @@ public class EmployeeServiceImpl implements EmployeeService{
 
             employeeRespository.save(new Employee(id, employeeForm.getNameEmployee(),
                     employeeForm.getSex(), birthDate, employeeForm.getAddress(), employeeForm.getPhone(),
-                    employeeForm.getEmail(), basicSalary, AccountServiceImpl.FULL_NAME, date, null, null, null, null));
+                    employeeForm.getEmail(), basicSalary, accountId, date, null, null, null, null));
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
 	@Override
-	public void editEmployee(EmployeeForm employeeForm) {
+	public void editEmployee(EmployeeEditForm employeeForm, String accountId) {
+	    Employee employee = this.getOneEmployeeByID(employeeForm.getIdEmployee());
 		Date date = new Date();
         Date birthDate;
         try {
@@ -86,9 +88,18 @@ public class EmployeeServiceImpl implements EmployeeService{
 
             employeeRespository.save(new Employee(id, employeeForm.getNameEmployee(),
                     employeeForm.getSex(), birthDate, employeeForm.getAddress(), employeeForm.getPhone(),
-                    employeeForm.getEmail(), basicSalary, AccountServiceImpl.FULL_NAME, date, null, null, null, null));
+                    employeeForm.getEmail(), basicSalary, employee.getRegisterId(), employee.getRegisterTsamp(), accountId, date, null, null));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 	}
+
+    @Override
+    public void deleteEmployee(Integer id, String accountId) {
+        Employee employee = this.getOneEmployeeByID(id);
+        Date deleteTsamp = new Date();
+        employee.setDeleteTsamp(deleteTsamp);
+        employee.setDeleteId(accountId);
+        employeeRespository.save(employee);
+    }
 }

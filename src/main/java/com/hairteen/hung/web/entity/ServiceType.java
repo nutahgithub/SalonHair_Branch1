@@ -1,10 +1,12 @@
 package com.hairteen.hung.web.entity;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +42,21 @@ public class ServiceType {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
+    
+    @OneToMany(mappedBy = "serviceType")
+    private Collection<Service> services;
+
+    public Collection<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(Collection<Service> services) {
+        this.services = services;
+    }
+
+    public void setIdServiceType(Integer idServiceType) {
+        this.idServiceType = idServiceType;
+    }
 
     public String getNameServiceType() {
         return nameServiceType;
@@ -100,4 +117,10 @@ public class ServiceType {
     public Integer getIdServiceType() {
         return idServiceType;
     }
+
+    public ServiceType(Integer idServiceType) {
+        super();
+        this.idServiceType = idServiceType;
+    }
+    public ServiceType() {}
 }

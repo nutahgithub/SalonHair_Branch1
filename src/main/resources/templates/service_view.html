@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Quản lý dịch vụ </title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/css/style.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+	<link href="https://fonts.googleapis.com/css2?family=Play&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Itim|Lobster|Montserrat:500|Noto+Serif|Nunito|Patrick+Hand|Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i|Roboto+Slab|Saira" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet prefetch" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+	<script>
+	$(document).ready(function(){
+		// Activate tooltip
+		$('[data-toggle="tooltip"]').tooltip();
+		$(function () {	
+			var modalFlag = $('#modalFlag').val();
+			console.log(modalFlag);
+			if (modalFlag == 1) {
+				$('#addServiceModal').modal('show');
+			} else if (modalFlag == 2) {
+				$('#editServiceModal').modal('show');
+			} else if (modalFlag == 3) {
+				$('#inOutServiceModal').modal('show');
+			}
+		});
+
+		// Edit modal
+		$('.table1 .edit').on('click',function(event){
+			event.preventDefault();
+			var href = $(this).attr('href');
+		$.get(href,function(service,status){
+				$('#editServiceModal #idService').val(service.idService);
+				$('#editServiceModal #nameService').val(service.nameService);
+				$('#editServiceModal #idServiceType').val(service.idServiceType);
+				$('#editServiceModal #priceService').val(service.priceService);
+			});
+
+			$('#editServiceModal').modal();
+		});
+		// In Out modal
+		$('.table1 .inOut').on('click',function(event){
+			event.preventDefault();
+			var href = $(this).attr('href');
+		$.get(href,function(service,status){
+				$('#inOutServiceModal #idServiceIO').val(service.idService);
+				$('#inOutServiceModal #nameServiceIO').val(service.nameService);
+			});
+
+			$('#inOutServiceModal').modal();
+		});
+		// Delete modal
+		$('.table1 .delete').on('click',function(event){
+			
+			event.preventDefault();
+			var href = $(this).attr('href');
+
+			$.get(href,function(service,status){
+				$('#deleteServiceModal #idServiceD').val(service.idService);
+			});
+
+			$('#deleteServiceModal').modal();
+		});
+	});
+	</script>
+</head>
+<body>
+
+<div class="container-fluid">
+
+	<!-- Include _menu.html -->
+	<th:block th:include="/_menu_header"></th:block>
+	<input type="hidden" th:value="${modalFlag}" class="invisible" id="modalFlag">
+	<div class="container-xl">
+		<div class="table-responsive">
+			<div class="table-wrapper">
+				<div class="table-title">
+					<div class="row">
+						<div class="col-sm-6">
+							<h2>Quản lý <b>Dịch vụ</b></h2>
+						</div>
+						<div class="col-sm-6">
+							<a href="#addServiceModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm dịch vụ</span></a>
+							<!-- <a href="#inOutServiceModal" class="btn btn-primary" data-toggle="modal"><i class="material-icons">&#xe8cb;</i> <span>Nhập/xuất</span></a> -->
+							<!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Xóa</span></a> -->
+						</div>
+					</div>
+				</div>
+				<table class="table1 table-striped table-hover">
+					<thead>
+						<tr>
+							<th>Stt</th>
+							<th>Tên dịch vụ/ sản phẩm</th>
+							<th>Loại dịch vụ</th>
+							<th>Giá tiền (đồng)</th>
+							<th>Số lượng còn (sp)</th>
+							<th>Nhập/xuất</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each ="service : ${servicePages.content}">
+							<td th:utext="${serviceStat.index + 1}"></td>
+							<td th:utext="${service.nameService}"></td>
+							<td th:utext="${service.serviceType.nameServiceType}"></td>
+							<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(service.priceService), '.00', ''), '$', '')}"></td>
+							<td th:utext="${service.countRemain}"></td>
+							<td>
+								<a th:href="@{service_find_one/(id=${service.idService})}" class="inOut"><i class="material-icons" data-toggle="tooltip" title="Nhập/xuất sản phẩm">&#xe8cb;</i></a>
+							</td>
+							<td>
+								<a th:href="@{service_find_one/(id=${service.idService})}" class="edit"><i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i></a>
+								<a th:href="@{service_find_one/(id=${service.idService})}" class="delete"><i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="clearfix">
+					<div class="hint-text">Hiển thị <b>3</b> của tổng <b th:text=${servicePages.totalElements}></b> dịch vụ</div>
+					<ul th:if="${servicePages.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+						<li class="page-item" th:class="${pageNumber==servicePages.number + 1} ? active">
+							<a th:href="@{/manager_service_view(pageId=${pageNumber})}" class="page-link" th:text=${pageNumber}></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Modal HTML -->
+	<div id="addServiceModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_register}" th:object="${serviceForm}" method="post">
+					<div class="modal-header">
+						<h4 class="modal-title">Thêm dịch vụ, sản phẩm</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="label-modal">Tên dịch vụ/ sản phẩm:</label>
+							<input type="text" class="form-control" th:field="*{nameService}" >
+							<span class="error-form" th:if="${#fields.hasErrors('nameService')}" th:errors="*{nameService}"></span>
+						</div>
+						<div class="form-group">
+							<label class="label-modal">Loại dịch vụ:</label>
+							<select th:field="*{idServiceType}" class="form-control">
+								<option th:each="serviceType : ${serviceTypes}"
+									th:value="${serviceType.idServiceType}"
+									th:utext="${serviceType.nameServiceType}"/>
+							</select>
+							<span class="error-form" th:if="${#fields.hasErrors('idServiceType')}" th:errors="*{idServiceType}"></span>
+						</div>
+						<div class="form-group">
+							<label>Giá tiền(đồng):</label>
+							<input type="number" class="form-control" th:field="*{priceService}">
+							<span class="error-form" th:if="${#fields.hasErrors('priceService')}" th:errors="*{priceService}"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-success" value="Thêm">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Edit Modal HTML -->
+	<div id="editServiceModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_edit}" th:object="${serviceEditForm}" method="post">
+					<input type="hidden" id="idService" th:field="*{idService}">
+					<div class="modal-header">
+						<h4 class="modal-title">Chỉnh sửa dịch vụ, sản phẩm</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="label-modal">Tên dịch vụ/ sản phẩm:</label>
+							<input type="text" id="nameService" class="form-control" th:field="*{nameService}" >
+							<span class="error-form" th:if="${#fields.hasErrors('nameService')}" th:errors="*{nameService}"></span>
+						</div>
+						<div class="form-group">
+							<label class="label-modal">Loại dịch vụ:</label>
+							<select id="idServiceType" th:field="*{idServiceType}" class="form-control">
+								<option th:each="serviceType : ${serviceTypes}"
+									th:value="${serviceType.idServiceType}"
+									th:utext="${serviceType.nameServiceType}"/>
+							</select>
+							<span class="error-form" th:if="${#fields.hasErrors('idServiceType')}" th:errors="*{idServiceType}"></span>
+						</div>
+						<div class="form-group">
+							<label>Giá tiền(đồng):</label>
+							<input id="priceService" type="number" class="form-control" th:field="*{priceService}">
+							<span class="error-form" th:if="${#fields.hasErrors('priceService')}" th:errors="*{priceService}"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-info" value="Lưu">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+		<!-- In/Out Modal HTML -->
+	<div id="inOutServiceModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_in_out}" th:object="${serviceInOutForm}" method="post">
+					<input type="hidden" id="idServiceIO" th:field="*{idService}">
+					<div class="modal-header">
+						<h4 class="modal-title">Nhập/xuất sản phẩm vào kho</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="label-modal">Tên dịch vụ/ sản phẩm:</label>
+							<input type="text" id="nameServiceIO" class="form-control" th:field="*{nameService}" readonly="readonly">
+						</div>
+						<div class="form-group">
+							<label class="label-modal">Chọn nhập hoặc xuất:</label>
+							<select th:field="*{statusInOut}" class="form-control" >
+								<option value="1">Nhập sản phẩm</option>
+								<option value="0">Xuất sản phẩm</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Số lượng:</label>
+							<input type="number" class="form-control" th:field="*{countInOut}">
+						</div>
+						<div class="form-group">
+							<label class="label-modal">Lý do nhập/xuất:</label>
+							<input type="text" class="form-control" th:field="*{resonInOut}">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-info" value="Thực hiện">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Delete Modal HTML -->
+	<div id="deleteServiceModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_delete}" th:object="${serviceForm}" method="post">
+					<input type="hidden" id="idServiceD" th:field="*{idService}">
+					<div class="modal-header">
+						<h4 class="modal-title">Xóa dịch vụ</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p>Bạn muốn xóa dịch vụ này?</p>
+						<p class="text-warning"><small>Hành động này không thể khôi phục!</small></p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-danger" value="Xóa">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

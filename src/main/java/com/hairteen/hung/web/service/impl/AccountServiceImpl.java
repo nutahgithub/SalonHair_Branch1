@@ -23,8 +23,6 @@ import com.hairteen.hung.web.utils.EncrytedPasswordUtils;
 @Service
 public class AccountServiceImpl implements AccountService, UserDetailsService{
 
-    public static String FULL_NAME = "";
-
     @Autowired
     private AccountRespositoryCustom accountRespositoryCustom;
 
@@ -42,8 +40,6 @@ public class AccountServiceImpl implements AccountService, UserDetailsService{
             throw new UsernameNotFoundException("account " + userName + " was not found in the database");
         }
 
-        FULL_NAME = account.getUserName();
- 
         System.out.println("Found account: " + account);
  
         // Add role

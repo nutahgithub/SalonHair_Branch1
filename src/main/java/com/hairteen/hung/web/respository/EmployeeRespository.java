@@ -13,12 +13,25 @@ import com.hairteen.hung.web.entity.Employee;
 @Repository
 public interface EmployeeRespository extends JpaRepository<Employee, Integer>{
 
+    /**
+     * Get max id employee.
+     * 
+     * @return Integer
+     */
     @Query("SELECT coalesce(max(ep.id), 0) FROM Employee ep")
     Integer getMaxId();
 
+    /**
+     * Find all employee page.
+     * 
+     */
     @Query("SELECT e from Employee e where e.deleteTsamp IS NULL")
     Page<Employee> findAll(Pageable pageable);
 
+    /**
+     * Get list all employee.
+     * 
+     */
     @Query("SELECT e from Employee e where e.deleteTsamp IS NULL")
     List<Employee> findAll();
 }
