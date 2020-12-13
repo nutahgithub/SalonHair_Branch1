@@ -23,15 +23,19 @@ public class ServiceServiceImpl implements ServiceService{
     private ServiceRespository serviceRespository;
 
     @Override
-    public Page<com.hairteen.hung.web.entity.Service> getServicePage(int page) {
+    public Page<com.hairteen.hung.web.entity.Service> getServicePage(int page, Integer serviceTypeId) {
 
-        int totalRecord = serviceRespository.findAll().size();
+        int totalRecord;
+        if (serviceTypeId == null) {
+            totalRecord = serviceRespository.findAll().size();
+        } else {
+            totalRecord = serviceRespository.findByServiceType(new ServiceType(serviceTypeId)).size();
+        }
+
         int totalPage = totalRecord/ConstantDefine.PAGINATION_SERVICE;
-
         if (totalRecord % ConstantDefine.PAGINATION_SERVICE > 0) {
             totalPage++;
         }
-
         // page select > total Page
         if (page > totalPage  && totalPage > 0) {
             page = totalPage - 1;
@@ -43,7 +47,13 @@ public class ServiceServiceImpl implements ServiceService{
             page = page -1;
         }
 
-        Page<com.hairteen.hung.web.entity.Service> pages =serviceRespository.findAll(PageRequest.of(page, ConstantDefine.PAGINATION_SERVICE));
+        // Get detail info.
+        Page<com.hairteen.hung.web.entity.Service> pages;
+        if (serviceTypeId == null) {
+            pages = serviceRespository.findAll(PageRequest.of(page, ConstantDefine.PAGINATION_SERVICE));
+        } else {
+            pages = serviceRespository.findAll(PageRequest.of(page, ConstantDefine.PAGINATION_SERVICE), new ServiceType(serviceTypeId));
+        }
         return pages;
     }
 

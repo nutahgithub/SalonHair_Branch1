@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.hairteen.hung.web.entity.Service;
+import com.hairteen.hung.web.entity.ServiceType;
 
 @Repository
 public interface ServiceRespository extends JpaRepository<Service, Integer>{
@@ -34,4 +35,10 @@ public interface ServiceRespository extends JpaRepository<Service, Integer>{
      */
     @Query("SELECT sv from Service sv where sv.deleteTsamp IS NULL")
     List<Service> findAll();
+    
+    @Query("SELECT sv from Service sv where sv.serviceType = :serviceType and sv.deleteTsamp IS NULL")
+    List<Service> findByServiceType(ServiceType serviceType);
+    
+    @Query("SELECT sv from Service sv where sv.serviceType = :serviceType and sv.deleteTsamp IS NULL")
+    Page<Service> findAll(Pageable pageable, ServiceType serviceType);
 }

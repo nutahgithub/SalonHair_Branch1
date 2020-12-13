@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.controller;
+package com.hairteen.hung.web.controller.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.hairteen.hung.web.entity.Service;
@@ -66,16 +67,18 @@ public class ServiceInOutController {
      */
     @RequestMapping(value = "/service_in_out", method = RequestMethod.POST)
     public String serviceEdit(Model model,
+            @RequestParam(value = "serviceTypeId",required = false) String serviceTypeId,
             @ModelAttribute("serviceInOutForm") @Validated ServiceInOutForm serviceInOutForm,
             BindingResult result, RedirectAttributes redirectAttributes) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String user = authentication.getName();
 
+        String serviceParam = serviceTypeId==null?"all":serviceTypeId;
         // Validate result
         if (result.hasErrors()) {
             // Get list Service pages
-            Page<Service> servicePages = serviceService.getServicePage(1);
+            Page<Service> servicePages = serviceService.getServicePage(1, null);
             int totalPages = servicePages.getTotalPages();
 
             if (totalPages > 0) {
@@ -92,11 +95,13 @@ public class ServiceInOutController {
             model.addAttribute("serviceInOutForm", serviceInOutForm);
             model.addAttribute("servicePages", servicePages);
             model.addAttribute("modalFlag", ConstantDefine.MODAL_DISPLAY_IN_OUT_FLAG);
+            model.addAttribute("serviceTypeId", serviceParam);
             return "service_view";
         }
 
         serviceService.inOutService(serviceInOutForm, user);
         serviceHistoryService.saveService(serviceInOutForm, user);
-        return "redirect:/manager_service_view?pageId=1";
+        model.addAttribute("serviceTypeId", serviceParam);
+        return "redirect:/manager_service_view?pageId=1&serviceType="+serviceParam;
     }
 }

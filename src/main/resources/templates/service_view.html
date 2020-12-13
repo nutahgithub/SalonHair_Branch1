@@ -21,21 +21,38 @@
 		$('[data-toggle="tooltip"]').tooltip();
 		$(function () {	
 			var modalFlag = $('#modalFlag').val();
-			console.log(modalFlag);
+			var serviceType = $('#serviceTypeId').val();
+			$("select.service-types").val(serviceType);
+
 			if (modalFlag == 1) {
+				var selectedServiceType = $("select.service-types").children("option:selected").val();
+				$('#addServiceModal #serviceTypeIdR').val(selectedServiceType);
 				$('#addServiceModal').modal('show');
 			} else if (modalFlag == 2) {
+				var selectedServiceType = $("select.service-types").children("option:selected").val();
+				$('#editServiceModal #serviceTypeIdE').val(selectedServiceType);
 				$('#editServiceModal').modal('show');
 			} else if (modalFlag == 3) {
+				var selectedServiceType = $("select.service-types").children("option:selected").val();
+				$('#inOutServiceModal #serviceTypeIdIO').val(selectedServiceType);
 				$('#inOutServiceModal').modal('show');
 			}
+			
+		});
+		
+		$('.table-title .register').on('click',function(event){
+			var selectedServiceType = $("select.service-types").children("option:selected").val();
+			$('#addServiceModal #serviceTypeIdR').val(selectedServiceType);
+			$('#addServiceModal').modal();
 		});
 
 		// Edit modal
 		$('.table1 .edit').on('click',function(event){
 			event.preventDefault();
 			var href = $(this).attr('href');
-		$.get(href,function(service,status){
+			var selectedServiceType = $("select.service-types").children("option:selected").val();
+			$('#editServiceModal #serviceTypeIdE').val(selectedServiceType);
+			$.get(href,function(service,status){
 				$('#editServiceModal #idService').val(service.idService);
 				$('#editServiceModal #nameService').val(service.nameService);
 				$('#editServiceModal #idServiceType').val(service.idServiceType);
@@ -48,7 +65,9 @@
 		$('.table1 .inOut').on('click',function(event){
 			event.preventDefault();
 			var href = $(this).attr('href');
-		$.get(href,function(service,status){
+			var selectedServiceType = $("select.service-types").children("option:selected").val();
+			$('#inOutServiceModal #serviceTypeIdIO').val(selectedServiceType);
+			$.get(href,function(service,status){
 				$('#inOutServiceModal #idServiceIO').val(service.idService);
 				$('#inOutServiceModal #nameServiceIO').val(service.nameService);
 			});
@@ -57,15 +76,21 @@
 		});
 		// Delete modal
 		$('.table1 .delete').on('click',function(event){
-			
 			event.preventDefault();
 			var href = $(this).attr('href');
+			var selectedServiceType = $("select.service-types").children("option:selected").val();
+			$('#deleteServiceModal #serviceTypeIdD').val(selectedServiceType);
 
 			$.get(href,function(service,status){
 				$('#deleteServiceModal #idServiceD').val(service.idService);
 			});
 
 			$('#deleteServiceModal').modal();
+		});
+		// Select service type
+		$("select.service-types").change(function(){
+			var selectedServiceType = $(this).children("option:selected").val();
+			window.location.href = "/manager_service_view?serviceType="+selectedServiceType;
 		});
 	});
 	</script>
@@ -77,16 +102,27 @@
 	<!-- Include _menu.html -->
 	<th:block th:include="/_menu_header"></th:block>
 	<input type="hidden" th:value="${modalFlag}" class="invisible" id="modalFlag">
+	<input type="hidden" th:value="${serviceTypeId}" class="invisible" id="serviceTypeId">
 	<div class="container-xl">
 		<div class="table-responsive">
 			<div class="table-wrapper">
 				<div class="table-title">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-4">
 							<h2>Quản lý <b>Dịch vụ</b></h2>
 						</div>
-						<div class="col-sm-6">
-							<a href="#addServiceModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm dịch vụ</span></a>
+						<div class="col-sm-4">
+							<div class="form-group" style="display: inline;">
+								<select class="form-control service-types">
+									<option value = "all">--Tất cả loại dịch vụ--</option>
+									<option th:each="serviceType : ${serviceTypes}"
+										th:value="${serviceType.idServiceType}" th:utext="${serviceType.nameServiceType}">
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<a href="#" class="btn btn-success register" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm dịch vụ</span></a>
 							<!-- <a href="#inOutServiceModal" class="btn btn-primary" data-toggle="modal"><i class="material-icons">&#xe8cb;</i> <span>Nhập/xuất</span></a> -->
 							<!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Xóa</span></a> -->
 						</div>
@@ -95,13 +131,14 @@
 				<table class="table1 table-striped table-hover">
 					<thead>
 						<tr>
-							<th>Stt</th>
-							<th>Tên dịch vụ/ sản phẩm</th>
-							<th>Loại dịch vụ</th>
-							<th>Giá tiền (đồng)</th>
-							<th>Số lượng còn (sp)</th>
-							<th>Nhập/xuất</th>
-							<th></th>
+							<th class="tservice-no">Stt</th>
+							<th class="tservice-name">Tên dịch vụ/ sản phẩm</th>
+							<th class="tservice-type">Loại dịch vụ</th>
+							<th class="tservice-price">Giá tiền (đồng)</th>
+							<th class="tservice-remain">SL tồn kho</th>
+							<th class="tservice-inout"></th>
+							<th class="tservice-edit">Sửa</th>
+							<th class="tservice-delete">Xóa</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -112,10 +149,12 @@
 							<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(service.priceService), '.00', ''), '$', '')}"></td>
 							<td th:utext="${service.countRemain}"></td>
 							<td>
-								<a th:href="@{service_find_one/(id=${service.idService})}" class="inOut"><i class="material-icons" data-toggle="tooltip" title="Nhập/xuất sản phẩm">&#xe8cb;</i></a>
+								<a th:href="@{service_find_one/(id=${service.idService})}" class="inOut"><i>Nhập/xuất</i></a>
 							</td>
 							<td>
 								<a th:href="@{service_find_one/(id=${service.idService})}" class="edit"><i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i></a>
+							</td>
+							<td>
 								<a th:href="@{service_find_one/(id=${service.idService})}" class="delete"><i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i></a>
 							</td>
 						</tr>
@@ -125,7 +164,7 @@
 					<div class="hint-text">Hiển thị <b>3</b> của tổng <b th:text=${servicePages.totalElements}></b> dịch vụ</div>
 					<ul th:if="${servicePages.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
 						<li class="page-item" th:class="${pageNumber==servicePages.number + 1} ? active">
-							<a th:href="@{/manager_service_view(pageId=${pageNumber})}" class="page-link" th:text=${pageNumber}></a>
+							<a th:href="@{/manager_service_view(pageId=${pageNumber}, serviceType=${serviceTypeId})}" class="page-link" th:text=${pageNumber}></a>
 						</li>
 					</ul>
 				</div>
@@ -138,6 +177,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form th:action="@{/service_register}" th:object="${serviceForm}" method="post">
+				<input type="hidden" id="serviceTypeIdR" th:name="serviceTypeId">
 					<div class="modal-header">
 						<h4 class="modal-title">Thêm dịch vụ, sản phẩm</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -176,6 +216,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form th:action="@{/service_edit}" th:object="${serviceEditForm}" method="post">
+					<input type="hidden" id="serviceTypeIdE" th:name="serviceTypeId">
 					<input type="hidden" id="idService" th:field="*{idService}">
 					<div class="modal-header">
 						<h4 class="modal-title">Chỉnh sửa dịch vụ, sản phẩm</h4>
@@ -215,6 +256,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form th:action="@{/service_in_out}" th:object="${serviceInOutForm}" method="post">
+					<input type="hidden" id="serviceTypeIdIO" th:name="serviceTypeId">
 					<input type="hidden" id="idServiceIO" th:field="*{idService}">
 					<div class="modal-header">
 						<h4 class="modal-title">Nhập/xuất sản phẩm vào kho</h4>
@@ -254,6 +296,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form th:action="@{/service_delete}" th:object="${serviceForm}" method="post">
+					<input type="hidden" id="serviceTypeIdD" th:name="serviceTypeId">
 					<input type="hidden" id="idServiceD" th:field="*{idService}">
 					<div class="modal-header">
 						<h4 class="modal-title">Xóa dịch vụ</h4>

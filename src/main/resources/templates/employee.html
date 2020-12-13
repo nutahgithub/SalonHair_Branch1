@@ -129,15 +129,16 @@
 									<label for="selectAll"></label>
 								</span>
 							</th> -->
-							<th>Stt</th>
-							<th>Họ và Tên</th>
-							<th>Giới tính</th>
-							<th>Ngày sinh</th>
-							<th>Địa chỉ</th>
-							<th>Điện thoại</th>
+							<th class="temployee-no">Stt</th>
+							<th class="temployee-name">Họ và Tên</th>
+							<th class="temployee-sex">Giới tính</th>
+							<th class="temployee-birthdate">Ngày sinh</th>
+							<th class="temployee-address">Địa chỉ</th>
+							<th class="temployee-phone">Điện thoại</th>
 							<!-- <th>Email</th> -->
-							<th>Lương CB</th>
-							<th></th>
+							<th class="temployee-salary">Lương CB(đ)</th>
+							<th class="temployee-edit">Sửa</th>
+							<th class="temployee-delete">Xóa</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -150,7 +151,7 @@
 							</td> -->
 							<td th:utext="${employeeStat.index + 1}"></td>
 							<td th:utext="${employee.nameEmployee}"></td>
-							<td th:utext="${employee.sex == 1}? 'Nam': 'Nu'"></td>
+							<td th:utext="${employee.sex == 1}? 'Nam': 'Nữ'"></td>
 							<td th:utext="${#dates.format(employee.birthday,'dd-MM-yyyy')}"></td>
 							<td th:utext="${employee.address}"></td>
 							<td th:utext="${employee.phone}"></td>
@@ -158,6 +159,8 @@
 							<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(employee.basicSalary), '.00', ''), '$', '')}"></td>
 							<td>
 								<a th:href="@{findOne/(id=${employee.idEmployee})}" class="edit"><i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i></a>
+							</td>
+							<td>
 								<a th:href="@{findOne/(id=${employee.idEmployee})}" class="delete"><i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i></a>
 							</td>
 						</tr>

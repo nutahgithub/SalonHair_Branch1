@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.controller;
+package com.hairteen.hung.web.controller.employee;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,26 +19,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.hairteen.hung.web.entity.Service;
-import com.hairteen.hung.web.form.ServiceEditForm;
-import com.hairteen.hung.web.form.ServiceForm;
-import com.hairteen.hung.web.form.ServiceInOutForm;
-import com.hairteen.hung.web.service.ServiceService;
-import com.hairteen.hung.web.service.ServiceTypeService;
+import com.hairteen.hung.web.entity.Employee;
+import com.hairteen.hung.web.form.EmployeeEditForm;
+import com.hairteen.hung.web.form.EmployeeForm;
+import com.hairteen.hung.web.service.EmployeeService;
 import com.hairteen.hung.web.utils.ConstantDefine;
-import com.hairteen.hung.web.validator.ServiceEditValidator;
+import com.hairteen.hung.web.validator.EmployeeEditValidator;
 
 @Controller
-public class ServiceEditController {
+public class EmployeeEditController {
 
     @Autowired
-    private ServiceService serviceService;
+    private EmployeeService employeeService;
 
     @Autowired
-    private ServiceTypeService serviceTypeService;
-
-    @Autowired
-    private ServiceEditValidator serviceValidator;
+    private EmployeeEditValidator employeeEditValidator;
 
     // Set a form validator
     @InitBinder
@@ -49,20 +44,20 @@ public class ServiceEditController {
             return;
         }
  
-        if (target.getClass() == ServiceEditForm.class) {
-            dataBinder.setValidator(serviceValidator);
+        if (target.getClass() == EmployeeEditForm.class) {
+            dataBinder.setValidator(employeeEditValidator);
         }
     }
 
     /**
-     * Do Service edit.
+     * Do employee Edit.
      * @param model
-     * @param ServiceForm
+     * @param employeeForm
      * @return
      */
-    @RequestMapping(value = "/service_edit", method = RequestMethod.POST)
-    public String serviceEdit(Model model,
-            @ModelAttribute("serviceEditForm") @Validated ServiceEditForm serviceEditForm,
+    @RequestMapping(value = "/employee_edit", method = RequestMethod.POST)
+    public String employeeEdit(Model model,
+            @ModelAttribute("employeeEditForm") @Validated EmployeeEditForm employeeForm,
             BindingResult result, RedirectAttributes redirectAttributes) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -70,9 +65,9 @@ public class ServiceEditController {
 
         // Validate result
         if (result.hasErrors()) {
-            // Get list Service pages
-            Page<Service> servicePages = serviceService.getServicePage(1);
-            int totalPages = servicePages.getTotalPages();
+            // Get list employee pages
+            Page<Employee> employeePages = employeeService.getEmployeePage(1);
+            int totalPages = employeePages.getTotalPages();
 
             if (totalPages > 0) {
                 // Create List page
@@ -82,16 +77,14 @@ public class ServiceEditController {
                 model.addAttribute("pageNumbers", pageNumbers);
             }
 
-            model.addAttribute("serviceTypes", serviceTypeService.getAllServiceType());
-            model.addAttribute("serviceForm", new ServiceForm());
-            model.addAttribute("serviceEditForm", serviceEditForm);
-            model.addAttribute("serviceInOutForm", new ServiceInOutForm());
-            model.addAttribute("servicePages", servicePages);
             model.addAttribute("modalFlag", ConstantDefine.MODAL_DISPLAY_EDIT_FLAG);
-            return "service_view";
+            model.addAttribute("employeeForm", new EmployeeForm());
+            model.addAttribute("employeeEditForm", employeeForm);
+            model.addAttribute("employeePages", employeePages);
+            return "employee";
         }
 
-        serviceService.editService(serviceEditForm, user);
-        return "redirect:/manager_service_view?pageId=1";
+        employeeService.editEmployee(employeeForm, user);
+        return "redirect:/manager_employee_view?pageId=1";
     }
 }

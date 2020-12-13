@@ -229,14 +229,15 @@ table.table1 tr th, table.table1 tr td {
 	padding: 5px 15px;
 	vertical-align: middle;
 }
-table.table1 tr th:first-child {
+/* table.table1 tr th:first-child {
 	width: 30px;
 }
 table.table1 tr th:last-child {
-	width: 100px;
-}
+	width: 100%;
+} */
 table.table-striped thead{
     background-color: #959492;
+    width: 100%;
 }
 
 table.table-striped tbody tr:nth-of-type(odd) {
@@ -416,4 +417,59 @@ table.table1 .avatar {
 	font-size:90%;
     font-style: italic;
     color: red;
+}
+
+/* List service */
+.tservice-no{
+	width: 3%;
+}
+.tservice-name{
+	width: 30%;
+}
+.tservice-type{
+	width: 22%;
+}
+.tservice-price{
+	width: 17%;
+}
+.tservice-remain{
+	width: 13%;
+}
+.tservice-inout{
+	width: 7%;
+}
+.tservice-edit{
+	width: 4%;
+}
+.tservice-delete{
+	width: 4%;
+}
+
+/* List employee */
+.temployee-no{
+	width: 3%;
+}
+.temployee-name{
+	width: 25%;
+}
+.temployee-sex{
+	width: 8%;
+}
+.temployee-birthdate{
+	width: 14%;
+}
+.temployee-address{
+	width: 25%;
+}
+.temployee-phone{
+	width: 7%;
+}
+.temployee-salary{
+	width: 12%;
+}
+.temployee-edit{
+	width: 3%;
+}
+.temployee-delete{
+	width: 3%;
 }

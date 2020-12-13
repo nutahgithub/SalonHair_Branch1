@@ -17,7 +17,7 @@ public interface ServiceService {
      * @param page
      * @return Page<Service>
      */
-    Page<Service> getServicePage(int page);
+    Page<Service> getServicePage(int page, Integer serviceTypeId);
 
     /**
      * Get list all Service.

@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.controller;
+package com.hairteen.hung.web.controller.account;
 
 import java.security.Principal;
 

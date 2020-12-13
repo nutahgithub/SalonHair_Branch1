@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.controller;
+package com.hairteen.hung.web.controller.useservice;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

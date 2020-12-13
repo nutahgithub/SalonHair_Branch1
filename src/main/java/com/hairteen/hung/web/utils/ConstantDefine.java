@@ -3,10 +3,10 @@ package com.hairteen.hung.web.utils;
 public class ConstantDefine {
 
     /* Number record in page */
-    public static final int PAGINATION_EMPLOYEE = 10;
+    public static final int PAGINATION_EMPLOYEE = 3;
 
     /* Number record in page */
-    public static final int PAGINATION_SERVICE = 10;
+    public static final int PAGINATION_SERVICE = 3;
 
     /* Display modal add */
     public static final int MODAL_DISPLAY_ADD_FLAG = 1;

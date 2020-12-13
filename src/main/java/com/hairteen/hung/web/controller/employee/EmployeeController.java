@@ -1,4 +1,4 @@
-package com.hairteen.hung.web.controller;
+package com.hairteen.hung.web.controller.employee;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,26 +21,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.hairteen.hung.web.entity.Service;
-import com.hairteen.hung.web.form.ServiceEditForm;
-import com.hairteen.hung.web.form.ServiceForm;
-import com.hairteen.hung.web.form.ServiceInOutForm;
-import com.hairteen.hung.web.service.ServiceService;
-import com.hairteen.hung.web.service.ServiceTypeService;
+import com.hairteen.hung.web.entity.Employee;
+import com.hairteen.hung.web.form.EmployeeEditForm;
+import com.hairteen.hung.web.form.EmployeeForm;
+import com.hairteen.hung.web.service.EmployeeService;
 import com.hairteen.hung.web.utils.ConstantDefine;
-import com.hairteen.hung.web.validator.ServiceValidator;
+import com.hairteen.hung.web.validator.EmployeeValidator;
 
 @Controller
-public class ServiceController {
+public class EmployeeController {
 
     @Autowired
-    private ServiceService serviceService;
+    private EmployeeService employeeService;
 
     @Autowired
-    private ServiceTypeService serviceTypeService;
-
-    @Autowired
-    private ServiceValidator serviceValidator;
+    private EmployeeValidator employeeValidator;
 
     // Set a form validator
     @InitBinder
@@ -51,19 +46,19 @@ public class ServiceController {
             return;
         }
  
-        if (target.getClass() == ServiceForm.class) {
-            dataBinder.setValidator(serviceValidator);
+        if (target.getClass() == EmployeeForm.class) {
+            dataBinder.setValidator(employeeValidator);
         }
     }
 
     /**
-     * Init manager Service screen.
+     * Init manager employee screen.
      * @param model
      * @param pageId
      * @return
      */
-    @RequestMapping(value = "/manager_service_view", method = RequestMethod.GET)
-    public String serviceView(Model model, @RequestParam(required = false) String pageId) {
+    @RequestMapping(value = "/manager_employee_view", method = RequestMethod.GET)
+    public String employeeView(Model model, @RequestParam(required = false) String pageId) {
 
         Integer pageIdInt;
 
@@ -74,9 +69,9 @@ public class ServiceController {
             pageIdInt = 1;
         }
 
-        // Get list Service pages
-        Page<Service> servicePages = serviceService.getServicePage(pageIdInt);
-        int totalPages = servicePages.getTotalPages();
+        // Get list employee pages
+        Page<Employee> employeePages = employeeService.getEmployeePage(pageIdInt);
+        int totalPages = employeePages.getTotalPages();
 
         if (totalPages > 0) {
             // Create List page
@@ -86,23 +81,21 @@ public class ServiceController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
-        model.addAttribute("serviceTypes", serviceTypeService.getAllServiceType());
-        model.addAttribute("serviceForm", new ServiceForm());
-        model.addAttribute("serviceEditForm", new ServiceEditForm());
-        model.addAttribute("serviceInOutForm", new ServiceInOutForm());
-        model.addAttribute("servicePages", servicePages);
-        return "service_view";
+        model.addAttribute("employeeForm", new EmployeeForm());
+        model.addAttribute("employeeEditForm", new EmployeeEditForm());
+        model.addAttribute("employeePages", employeePages);
+        return "employee";
     }
 
     /**
-     * Do Service register.
+     * Do employee register.
      * @param model
-     * @param ServiceForm
+     * @param employeeForm
      * @return
      */
-    @RequestMapping(value = "/service_register", method = RequestMethod.POST)
-    public String serviceRegister(Model model,
-            @ModelAttribute("serviceForm") @Validated ServiceForm serviceForm,
+    @RequestMapping(value = "/employee_register", method = RequestMethod.POST)
+    public String employeeRegister(Model model,
+            @ModelAttribute("employeeForm") @Validated EmployeeForm employeeForm,
             BindingResult result, RedirectAttributes redirectAttributes) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -110,9 +103,9 @@ public class ServiceController {
 
         // Validate result
         if (result.hasErrors()) {
-            // Get list Service pages
-            Page<Service> servicePages = serviceService.getServicePage(1);
-            int totalPages = servicePages.getTotalPages();
+            // Get list employee pages
+            Page<Employee> employeePages = employeeService.getEmployeePage(1);
+            int totalPages = employeePages.getTotalPages();
 
             if (totalPages > 0) {
                 // Create List page
@@ -122,27 +115,25 @@ public class ServiceController {
                 model.addAttribute("pageNumbers", pageNumbers);
             }
 
-            model.addAttribute("serviceTypes", serviceTypeService.getAllServiceType());
-            model.addAttribute("serviceForm", serviceForm);
-            model.addAttribute("serviceEditForm", new ServiceEditForm());
-            model.addAttribute("serviceInOutForm", new ServiceInOutForm());
-            model.addAttribute("servicePages", servicePages);
             model.addAttribute("modalFlag", ConstantDefine.MODAL_DISPLAY_ADD_FLAG);
-            return "service_view";
+            model.addAttribute("employeeForm", employeeForm);
+            model.addAttribute("employeeEditForm", new EmployeeEditForm());
+            model.addAttribute("employeePages", employeePages);
+            return "employee";
         }
 
-        serviceService.saveService(serviceForm, user);
-        return "redirect:/manager_service_view?pageId=1";
+        employeeService.saveEmployee(employeeForm, user);
+        return "redirect:/manager_employee_view?pageId=1";
     }
 
     /**
-     * Get Service by ID.
+     * Get Employee by ID (popup edit).
      * @param id
-     * @return Service
+     * @return
      */
-    @RequestMapping("/service_find_one")
+    @RequestMapping("/findOne")
     @ResponseBody
-    public Service findOne(Integer id) {
-        return serviceService.getOneServiceByID(id);
+    public Employee findOne(Integer id) {
+        return employeeService.getOneEmployeeByID(id);
     }
 }
