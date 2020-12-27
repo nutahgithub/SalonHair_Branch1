@@ -31,49 +31,10 @@
 		<div class="row service">
 			<!--Chair service-->
 			<div class="col-md-5 chair-area">
-				<div class="row row-chair">
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 1</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 2</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 3</button>
-					</div>
-				</div>
-				<div class="row row-chair">
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 4</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 5</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 6</button>
-					</div>
-				</div>
-				<div class="row row-chair">
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 7</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 8</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 9</button>
-					</div>
-				</div>
-				<div class="row row-chair">
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 10</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 11</button>
-					</div>
-					<div class="col-4 col-4-row-chair">
-						<button type="button" class="btn btn-success btn-chair">Ghế 12</button>
-					</div>
+				<div class="row row-chair" th:each ="chairList : ${chairGroup}">
+						<div class="col-4 col-4-row-chair" th:each ="chair : ${chairList}">
+							<button type="button" class="btn btn-success btn-chair" th:utext="${chair.nameChair}"></button>
+						</div>
 				</div>
 			</div>
 
