@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Danh sách nhóm dịch vụ</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/css/style.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+	<link href="https://fonts.googleapis.com/css2?family=Play&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Itim|Lobster|Montserrat:500|Noto+Serif|Nunito|Patrick+Hand|Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i|Roboto+Slab|Saira" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet prefetch" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+	<script>
+	$(document).ready(function(){
+		// Activate tooltip
+		$('[data-toggle="tooltip"]').tooltip();
+		$(function () {	
+			var modalFlag = $('#modalFlag').val();
+
+			if (modalFlag == 1) {
+				$('#addServiceTypeModal').modal('show');
+			} else if (modalFlag == 2) {
+				$('#editServiceTypeModal').modal('show');
+			}
+		});
+		
+		$('.table-title .register').on('click',function(event){
+			$('#addServiceTypeModal').modal();
+		});
+
+		// Edit modal
+		$('.table1 .edit').on('click',function(event){
+			event.preventDefault();
+			var href = $(this).attr('href');
+			$.get(href,function(serviceType,status){
+				$('#editServiceTypeModal #idServiceType').val(serviceType.idServiceType);
+				$('#editServiceTypeModal #nameServiceType').val(serviceType.nameServiceType);
+			});
+
+			$('#editServiceTypeModal').modal();
+		});
+		// Delete modal
+		$('.table1 .delete').on('click',function(event){
+			event.preventDefault();
+			var href = $(this).attr('href');
+			$.get(href,function(serviceType,status){
+				$('#deleteServiceTypeModal #idServiceTypeD').val(serviceType.idServiceType);
+			});
+
+			$('#deleteServiceTypeModal').modal();
+		});
+	});
+	</script>
+</head>
+<body>
+
+<div class="container-fluid">
+
+	<!-- Include _menu.html -->
+	<th:block th:include="/_menu_header"></th:block>
+	<input type="hidden" th:value="${modalFlag}" class="invisible" id="modalFlag">
+	<div class="container-xl">
+		<div class="table-responsive">
+			<div class="table-wrapper">
+				<div class="table-title">
+					<div class="row">
+						<div class="col-sm-8">
+							<h2>Quản lý <b>Nhóm dịch vụ</b></h2>
+						</div>
+						<div class="col-sm-4">
+							<a href="#" class="btn btn-success register" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm loại DV</span></a>
+							<!-- <a href="#inOutServiceModal" class="btn btn-primary" data-toggle="modal"><i class="material-icons">&#xe8cb;</i> <span>Nhập/xuất</span></a> -->
+							<!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Xóa</span></a> -->
+						</div>
+					</div>
+				</div>
+				<table class="table1 table-striped table-hover">
+					<thead>
+						<tr>
+							<th class="tservice-no">Stt</th>
+							<th class="tservice-name">Tên loại dịch vụ</th>
+							<th class="tservice-type">Số dịch vụ</th>
+							<th class="tservice-edit">Sửa</th>
+							<th class="tservice-delete">Xóa</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each ="serviceType : ${serviceTypePages.content}">
+							<td th:utext="${serviceTypeStat.index + 1}"></td>
+							<td th:utext="${serviceType.nameServiceType}"></td>
+							<td th:utext="${serviceType.services.size()}"></td>
+							<td>
+								<a th:href="@{service_type_find_one/(id=${serviceType.idServiceType})}" class="edit"><i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i></a>
+							</td>
+							<td>
+								<a th:href="@{service_type_find_one/(id=${serviceType.idServiceType})}" class="delete"><i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="clearfix">
+					<div class="hint-text">Hiển thị <b>3</b> của tổng <b th:text=${serviceTypePages.totalElements}></b> nhóm dịch vụ</div>
+					<ul th:if="${serviceTypePages.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+						<li class="page-item" th:class="${pageNumber==serviceTypePages.number + 1} ? active">
+							<a th:href="@{/manager_service_type_view(pageId=${pageNumber})}" class="page-link" th:text=${pageNumber}></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Modal HTML -->
+	<div id="addServiceTypeModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_type_register}" th:object="${serviceTypeForm}" method="post">
+					<div class="modal-header">
+						<h4 class="modal-title">Thêm loại dịch vụ</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="label-modal">Tên nhóm dịch vụ:</label>
+							<input type="text" class="form-control" th:field="*{nameServiceType}" >
+							<span class="error-form" th:if="${#fields.hasErrors('nameServiceType')}" th:errors="*{nameServiceType}"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-success" value="Thêm">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Edit Modal HTML -->
+	<div id="editServiceTypeModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_type_edit}" th:object="${serviceTypeEditForm}" method="post">
+					<input type="hidden" id="idServiceType" th:field="*{idServiceType}">
+					<div class="modal-header">
+						<h4 class="modal-title">Chỉnh sửa nhóm dịch vụ</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="label-modal">Tên nhóm dịch vụ:</label>
+							<input type="text" id="nameServiceType" class="form-control" th:field="*{nameServiceType}" >
+							<span class="error-form" th:if="${#fields.hasErrors('nameServiceType')}" th:errors="*{nameServiceType}"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-info" value="Lưu">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Delete Modal HTML -->
+	<div id="deleteServiceTypeModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/service_type_delete}" th:object="${serviceTypeForm}" method="post">
+					<input type="hidden" id="idServiceTypeD" th:field="*{idServiceType}">
+					<div class="modal-header">
+						<h4 class="modal-title">Xóa nhóm dịch vụ</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p>Bạn muốn xóa nhóm dịch vụ này?</p>
+						<p class="text-warning"><small>Hành động này không thể khôi phục!</small></p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-danger" value="Xóa">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

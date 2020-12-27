@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Quản lý dịch vụ </title>
+	<title>Danh sách dịch vụ/sản phẩm </title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
@@ -273,14 +273,17 @@
 								<option value="1">Nhập sản phẩm</option>
 								<option value="0">Xuất sản phẩm</option>
 							</select>
+							<span class="error-form" th:if="${#fields.hasErrors('statusInOut')}" th:errors="*{statusInOut}"></span>
 						</div>
 						<div class="form-group">
 							<label>Số lượng:</label>
 							<input type="number" class="form-control" th:field="*{countInOut}">
+							<span class="error-form" th:if="${#fields.hasErrors('countInOut')}" th:errors="*{countInOut}"></span>
 						</div>
 						<div class="form-group">
 							<label class="label-modal">Lý do nhập/xuất:</label>
 							<input type="text" class="form-control" th:field="*{resonInOut}">
+							<span class="error-form" th:if="${#fields.hasErrors('resonInOut')}" th:errors="*{resonInOut}"></span>
 						</div>
 					</div>
 					<div class="modal-footer">

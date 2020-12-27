@@ -88,20 +88,21 @@ public class ServiceServiceImpl implements ServiceService{
     @Override
     public void editService(ServiceEditForm serviceForm, String accountId) {
 
-        Date date = new Date();
-        ServiceType serviceType = new ServiceType(serviceForm.getIdServiceType());
-        Float priceService = Float.parseFloat(serviceForm.getPriceService());
         Integer id = serviceForm.getIdService();
-        com.hairteen.hung.web.entity.Service service = new com.hairteen.hung.web.entity.Service(id, serviceForm.getNameService(), priceService,
-                0, 0, 0, accountId, date, null, null, null, null, serviceType); 
+        com.hairteen.hung.web.entity.Service service = this.getServiceByID(id);
+        Date date = new Date();
+        Float priceService = Float.parseFloat(serviceForm.getPriceService());
+        service.setNameService(serviceForm.getNameService());
+        service.setPriceService(priceService);
+        service.setUpdateId(accountId);
+        service.setUpdateTsamp(date);
 
             serviceRespository.save(service);
     }
 
     @Override
     public void deleteService(Integer id, String accountId) {
-        com.hairteen.hung.web.entity.Service service = this.getOneServiceByID(id);
-        service.setServiceType(new ServiceType(id));
+        com.hairteen.hung.web.entity.Service service = this.getServiceByID(id);
         Date deleteTsamp = new Date();
         service.setDeleteTsamp(deleteTsamp);
         service.setDeleteId(accountId);
@@ -124,5 +125,10 @@ public class ServiceServiceImpl implements ServiceService{
         serviceCurrent.setUpdateId(accountId);
         serviceCurrent.setUpdateTsamp(date);
         serviceRespository.save(serviceCurrent);
+    }
+
+    @Override
+    public com.hairteen.hung.web.entity.Service getServiceByID(Integer id) {
+        return serviceRespository.findById(id).get();
     }
 }

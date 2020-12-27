@@ -4,38 +4,23 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.hairteen.hung.web.entity.ServiceHistory;
-import com.hairteen.hung.web.entity.ServiceType;
 import com.hairteen.hung.web.form.ServiceInOutForm;
 import com.hairteen.hung.web.respository.ServiceHistoryRespository;
+import com.hairteen.hung.web.respository.ServiceHistoryRespositoryCustom;
 import com.hairteen.hung.web.service.ServiceHistoryService;
+import com.hairteen.hung.web.utils.ConstantDefine;
 
 @Service
 public class ServiceHistoryServiceImpl implements ServiceHistoryService{
 
     @Autowired
     private ServiceHistoryRespository serviceHistoryRespository;
-    
-    @Override
-    public Page<ServiceHistory> getServicePage(int page) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
-    @Override
-    public List<ServiceHistory> getAllService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ServiceHistory getOneServiceByID(Integer id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    @Autowired
+    private ServiceHistoryRespositoryCustom serviceHistoryRespositoryCustom;
 
     @Override
     public void saveService(ServiceInOutForm serviceInOutForm, String accountId) {
@@ -54,6 +39,17 @@ public class ServiceHistoryServiceImpl implements ServiceHistoryService{
         serviceHistory.setRegisterTsamp(date);
         serviceHistoryRespository.save(serviceHistory);
         
+    }
+
+    @Override
+    public List<ServiceHistory> findServiceHistoryByMonthAndServicePage(Integer year, Integer month, Integer serviceId, int page) {
+        page = page * ConstantDefine.PAGINATION_SERVICE_HISTORY;
+        return serviceHistoryRespositoryCustom.findServiceHistoryByMonthAndServicePage(year, month, null, page);
+    }
+
+    @Override
+    public List<ServiceHistory> getAllServiceHistoryByMonthAndService(Integer year, Integer month, Integer serviceId) {
+        return serviceHistoryRespositoryCustom.getAllServiceHistoryByMonthAndService(year, month, null);
     }
 
 }

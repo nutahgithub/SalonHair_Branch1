@@ -35,10 +35,23 @@ public interface ServiceRespository extends JpaRepository<Service, Integer>{
      */
     @Query("SELECT sv from Service sv where sv.deleteTsamp IS NULL")
     List<Service> findAll();
-    
+
+    /**
+     * Get all service by service type.
+     * 
+     * @param serviceType
+     * @return
+     */
     @Query("SELECT sv from Service sv where sv.serviceType = :serviceType and sv.deleteTsamp IS NULL")
     List<Service> findByServiceType(ServiceType serviceType);
-    
+
+    /**
+     * Get all service by service type page.
+     * 
+     * @param pageable
+     * @param serviceType
+     * @return
+     */
     @Query("SELECT sv from Service sv where sv.serviceType = :serviceType and sv.deleteTsamp IS NULL")
     Page<Service> findAll(Pageable pageable, ServiceType serviceType);
 }

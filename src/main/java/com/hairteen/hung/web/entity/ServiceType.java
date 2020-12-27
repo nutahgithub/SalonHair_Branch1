@@ -123,4 +123,18 @@ public class ServiceType {
         this.idServiceType = idServiceType;
     }
     public ServiceType() {}
+
+    public ServiceType(Integer idServiceType, String nameServiceType, String registerId, Date registerTsamp,
+            String updateId, Date updateTsamp, String deleteId, Date deleteTsamp, Collection<Service> services) {
+        super();
+        this.idServiceType = idServiceType;
+        this.nameServiceType = nameServiceType;
+        this.registerId = registerId;
+        this.registerTsamp = registerTsamp;
+        this.updateId = updateId;
+        this.updateTsamp = updateTsamp;
+        this.deleteId = deleteId;
+        this.deleteTsamp = deleteTsamp;
+        this.services = services;
+    }
 }

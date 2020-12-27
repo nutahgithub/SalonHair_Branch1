@@ -8,6 +8,12 @@ public class ConstantDefine {
     /* Number record in page */
     public static final int PAGINATION_SERVICE = 3;
 
+    /* Number record in page */
+    public static final int PAGINATION_SERVICE_HISTORY = 3;
+
+    /* Number record in page */
+    public static final int PAGINATION_SERVICE_TYPE = 3;
+
     /* Display modal add */
     public static final int MODAL_DISPLAY_ADD_FLAG = 1;
 

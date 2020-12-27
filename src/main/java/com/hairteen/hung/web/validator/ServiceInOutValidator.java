@@ -6,6 +6,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.hairteen.hung.web.form.ServiceInOutForm;
+import com.hairteen.hung.web.utils.ValidatorUtils;
 
 @Component
 public class ServiceInOutValidator implements Validator{
@@ -20,9 +21,14 @@ public class ServiceInOutValidator implements Validator{
         ServiceInOutForm serviceForm = (ServiceInOutForm)target;
 
         // Check not input
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameService", "ServiceForm.nameService.NotEmpty");
-        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "idServiceType", "ServiceForm.serviceType.NotEmpty");
-        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "priceService", "ServiceForm.priceService.NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "statusInOut", "ServiceInOutForm.statusInOut.NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "countInOut", "ServiceInOutForm.countInOut.NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "resonInOut", "ServiceInOutForm.resonInOut.NotEmpty");
+        if (!errors.hasFieldErrors("countInOut")) {
+            if (!ValidatorUtils.validateNumberPlus(serviceForm.getCountInOut())) {
+                errors.rejectValue("countInOut", "ServiceInOutForm.countInOut.Pattern");
+            }
+        }
     }
 
 }

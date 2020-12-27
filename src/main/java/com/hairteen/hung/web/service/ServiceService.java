@@ -65,4 +65,12 @@ public interface ServiceService {
      * @param accountId
      */
     void inOutService(ServiceInOutForm serviceInOutForm, String accountId);
+
+    /**
+     * Get Service by ID.( get all serviceType info)
+     * 
+     * @param id
+     * @return Service
+     */
+    Service getServiceByID(Integer id);
 }

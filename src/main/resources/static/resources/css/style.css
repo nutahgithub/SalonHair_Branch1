@@ -473,3 +473,23 @@ table.table1 .avatar {
 .temployee-delete{
 	width: 3%;
 }
+
+/* List service history */
+.tservicehistory-no{
+	width: 3%;
+}
+.tservicehistory-name{
+	width: 25%;
+}
+.tservicehistory-status{
+	width: 15%;
+}
+.tservicehistory-count{
+	width: 10%;
+}
+.tservicehistory-reason{
+	width: 25%;
+}
+.tservicehistory-date{
+	width: 22%;
+}
