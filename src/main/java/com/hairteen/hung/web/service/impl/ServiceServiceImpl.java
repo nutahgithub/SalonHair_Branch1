@@ -131,4 +131,10 @@ public class ServiceServiceImpl implements ServiceService{
     public com.hairteen.hung.web.entity.Service getServiceByID(Integer id) {
         return serviceRespository.findById(id).get();
     }
+
+    @Override
+    public List<com.hairteen.hung.web.entity.Service> getServiceByType(Integer serviceTypeId) {
+        // TODO Auto-generated method stub
+        return serviceRespository.findAll(new ServiceType(serviceTypeId));
+    }
 }

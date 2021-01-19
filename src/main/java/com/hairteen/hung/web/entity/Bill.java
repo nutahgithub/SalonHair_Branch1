@@ -1,13 +1,19 @@
 package com.hairteen.hung.web.entity;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "T_BILL")
@@ -25,11 +31,20 @@ public class Bill {
     @Column(name = "DATE_CHECKOUT")
     private Date dateCheckOut;
 
-    @Column(name = "ID_CHAIR")
+    @Transient
     private Integer idChair;
 
     @Column(name = "STATUS_BILL")
     private Integer statusBill;
+
+    @Column(name = "DIS_COUNT")
+    private Integer disCount;
+
+    @Column(name = "TOTAL_MONEY")
+    private Float totalMoney;
+
+    @Column(name = "REGISTER_ID")
+    private String registerId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "REGISTER_TSTAMP")
@@ -48,6 +63,14 @@ public class Bill {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
+    
+    @OneToMany(mappedBy = "bill")
+    private Collection<BillInfo> billInfos;
+    
+    // Co nhiu chair trong bill.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_CHAIR", nullable = false)
+    private Chair chair;
 
     public Date getDateCheckIn() {
         return dateCheckIn;
@@ -123,5 +146,33 @@ public class Bill {
 
     public Integer getIdBill() {
         return idBill;
+    }
+
+    public Collection<BillInfo> getBillInfos() {
+        return billInfos;
+    }
+
+    public void setBillInfos(Collection<BillInfo> billInfos) {
+        this.billInfos = billInfos;
+    }
+
+    public Chair getChair() {
+        return chair;
+    }
+
+    public void setChair(Chair chair) {
+        this.chair = chair;
+    }
+
+    public void setIdBill(Integer idBill) {
+        this.idBill = idBill;
+    }
+
+    public String getRegisterId() {
+        return registerId;
+    }
+
+    public void setRegisterId(String registerId) {
+        this.registerId = registerId;
     }
 }

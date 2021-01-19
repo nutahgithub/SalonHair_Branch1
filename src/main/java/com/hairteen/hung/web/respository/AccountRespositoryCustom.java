@@ -1,7 +1,10 @@
 package com.hairteen.hung.web.respository;
 
+import org.springframework.stereotype.Repository;
+
 import com.hairteen.hung.web.entity.Account;
 
+@Repository
 public interface AccountRespositoryCustom {
 
     /**

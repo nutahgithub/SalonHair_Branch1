@@ -19,4 +19,20 @@ public interface ChairService {
      * @return
      */
     List<List<Chair>> getGroupChair();
+
+    /**
+     * Get chair by id.
+     * 
+     * @param idChair
+     * @return
+     */
+    Chair getChairById(Integer idChair);
+
+    /**
+     * Update status chair.
+     * 
+     * @param idChair
+     * @param accountId
+     */
+    void updateStatusChair(Integer idChair, String accountId);
 }

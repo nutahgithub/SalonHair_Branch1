@@ -11,7 +11,97 @@
 	<link href="https://fonts.googleapis.com/css?family=Dancing+Script|Itim|Lobster|Montserrat:500|Noto+Serif|Nunito|Patrick+Hand|Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i|Roboto+Slab|Saira" rel="stylesheet">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>  
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<script>
+	$(document).ready(function(){
+		$(".btn-change-chair").click(function(){
+			$("#switchChairModal").modal('show');
+			var chairOldId = "[[${chair.idChair}]]";
+			var chairOldName = "[[${chair.nameChair}]]";
+			var chairNewId = $("select[name=selectorChair]").val();
+			var chairNewName = $("select[name=selectorChair] option:selected").text();
+			$("#idchairOld").val(chairOldId);
+			$("#idchairNew").val(chairNewId);
+			$("#chairNameOld").html(chairOldName);
+			$("#chairNameNew").html(chairNewName);
+		});
+		// Click button Add service to bill
+		$("#button_add_sv").click(function(){
+			var idChair = $("#chairIdUse").val();
+			var idService = $("#service-use-select").val();
+			var idEmployee = $("#id_employee_use").val();
+			var countService = $("#number_service").val();
+			if (countService == 0){
+				alert('Số lượng phải khác không!');
+				return;
+			}
+			$.ajax({
+				type: "post",
+				url: "/add_bill_info_to_bill",
+				data: { idChair: idChair, idService: idService, idEmployee: idEmployee, countService: countService,} ,
+				/* dataType: 'json', */
+				contentType: 'application/json; charset=utf-8',
+				success: function(response){
+					try {
+ 						var myJSON = JSON.parse(response);
+ 						var billInfoList = myJSON.billInfoList;
+ 						$("tbody#body_list_service tr").remove();
+ 						$("tbody#body_list_service td").remove();
+ 						var i;
+ 						for (i = 0; i < billInfoList.length; i++) {
+ 							$("tbody#body_list_service").append("<tr> ")
+ 							.append("<td>" + billInfoList[i].index + "</td>")
+ 							.append("<td>" + billInfoList[i].nameService + "</td>")
+ 							.append("<td>" + billInfoList[i].countService + " x</td>")
+ 							.append("<td>" + billInfoList[i].priceService + "</td>")
+ 							.append("<td>" + billInfoList[i].employeeName + "</td>")
+ 							.append("</tr>");
+ 						}
+						$("#total_price").val(myJSON.totalPrice);
+						$("label#time_check_in").html('');;
+						$("label#time_check_in").append(myJSON.timeCheckIn);
+					} catch(e) {
+						alert('Vui lòng chọn đầy đủ thông tin!');
+					}
+				},
+				error: function(){						
+					alert('Lỗi hệ thống, Hãy thử lại sau!');
+				}
+			});
+		});
+		
+		// Select service type
+		$("select.service-types-use").change(function(){
+			// Remove all(reset) service in option tag.
+			$("#service-use-select option").remove()
+			// Get value service type selected.
+			var serviceTypeId = $(this).children("option:selected").val();
+			$.ajax({
+				type: "post",
+				url: "/get_service",
+				data: { serviceTypeId: serviceTypeId} ,
+				/* dataType: 'json', */
+				contentType: 'application/json; charset=utf-8',
+				success: function(response){
+					try {
+						var myJSON = JSON.parse(response);
+						var serverList = myJSON.listService;
+						var i;
+						for (i = 0; i < serverList.length; i++) {
+							//console.log(serverList[i].nameService);
+							$("#service-use-select").append("<option value=" + serverList[i].idService +">" + serverList[i].nameService + "</option>");
+						}
+					} catch(e) {
+						alert('Vui lòng chọn loại dịch vụ!');
+					}
+				},
+				error: function(){						
+					alert('Đã có lỗi vui lòng chọn lại!');
+				}
+			});
+		});
+	});
+	</script>
 </head>
 <body>
 
@@ -32,8 +122,9 @@
 			<!--Chair service-->
 			<div class="col-md-5 chair-area">
 				<div class="row row-chair" th:each ="chairList : ${chairGroup}">
-						<div class="col-4 col-4-row-chair" th:each ="chair : ${chairList}">
-							<button type="button" class="btn btn-success btn-chair" th:utext="${chair.nameChair}"></button>
+						<div class="col-4 col-4-row-chair" th:each ="chairItem : ${chairList}">
+							<a class="btn btn-chair fas fa-couch" th:classappend="${chairItem.idChair==chair.idChair} ? btn-chair-click : (${chairItem.statusChair==1} ? btn-chair-active)" 
+							th:href="@{/use_service_view(chair=${chairItem.idChair})}" th:utext="${' ' + chairItem.nameChair}"></a>
 						</div>
 				</div>
 			</div>
@@ -47,9 +138,11 @@
 								<label class="label-service" for="sel1">Loại Dịch Vụ:</label>
 							</div>
 							<div class="col-sm-8">
-								<select class="form-control form-control-sm form-selection-type">
-									<option>Làm tóc</option>
-									<option>Bán sản phẩm</option>
+								<select class="form-control form-control-sm form-selection-type service-types-use">
+									<option>--Chọn loại Dịch vụ--</option>
+									<option th:each="serviceType : ${serviceTypes}"
+										th:value="${serviceType.idServiceType}" th:utext="${serviceType.nameServiceType}">
+									</option>
 								</select>
 							</div>
 						</div>
@@ -59,10 +152,7 @@
 								<label class="label-service" for="sel1">Dịch Vụ:</label>
 							</div>
 							<div class="col-sm-8">
-								<select class="form-control form-control-sm form-selection-type">
-									<option>Cắt tóc nam</option>
-									<option>Cắt tóc nữ</option>
-									<option>Nhuộm tóc</option>
+								<select class="form-control form-control-sm form-selection-type" id="service-use-select">
 								</select>
 							</div>
 						</div>
@@ -72,10 +162,11 @@
 								<label class="label-service" for="sel1">Nhân viên:</label>
 							</div>
 							<div class="col-sm-8">
-								<select class="form-control form-control-sm form-selection-type">
-									<option>Nguyễn Văn A</option>
-									<option>Nguyễn Văn B</option>
-									<option>Trần Thị C</option>
+								<select class="form-control form-control-sm form-selection-type" id="id_employee_use">
+									<option>--Chọn nhân viên--</option>
+									<option th:each="employee : ${employees}"
+										th:value="${employee.idEmployee}" th:utext="${employee.nameEmployee}">
+									</option>
 								</select>
 							</div>
 						</div>
@@ -88,25 +179,26 @@
 									<div class="col-sm-12">
 										<div class="count-area">
 											<label class="label-service-count" for="sel1">Số lượng:</label>
-								 			<input class="form-control service-count-input" type="number" value="1" id="example-number-input">
+								 			<input class="form-control service-count-input" type="number" value="1" id="number_service">
 										</div>
 									</div>
 								</div>
 
 								<div class="row">
 									<div class="col-sm-12">
-										<label for="time-in">Vào lúc: 15:35</label>
+										<label for="time-in" id="time_check_in" th:utext="${'Vào lúc: ' + timeCheckIn}"></label>
 									</div>
 								</div>
 
 								<div class="row">
 									<div class="col-sm-12">
-										<label style="font-size: 20px; color: #FFCE2B;" for="time-in">Ghế số 1</label>
+										<label style="font-size: 20px; color: #FFCE2B;" for="time-in" th:utext="${chair.nameChair}"></label>
+										<input type="hidden" id="chairIdUse" th:value="${chair.idChair}">
 									</div>
 								</div>
 							</div>
 					 		<div class="col-sm-5 btn-add-service-div">
-								<button type="button" class="btn btn-warning btn-add-service">Thêm DV</button>
+								<button type="button" id="button_add_sv" class="btn btn-warning btn-add-service">Thêm DV</button>
 					 		</div>
 						</div>
 					</div>
@@ -119,24 +211,17 @@
 								<th>STT</th>
 								<th>Tên dịch vụ</th>
 								<th>Số lượng</th>
-								<th>Giá(VND)</th>
+								<th>Giá 1 d.vụ(VND)</th>
 								<th>Nhân viên</th>
 							 </tr>
 						  </thead>
-						<tbody class="body-list">
-							<tr>
-								<td>1</td>
-								<td>Cắt tóc nam</td>
-								<td>1</td>
-								<td>30.000</td>
-								<td>Nguyễn văn A</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>Nhuộm Nam</td>
-								<td>2</td>
-								<td>150.000</td>
-								<td>Nguyễn văn A</td>
+						<tbody class="body-list" id="body_list_service">
+							<tr th:each ="billInfo : ${billInfos}">
+								<td th:utext="${billInfoStat.index + 1}"></td>
+								<td th:utext="${billInfo.service.nameService}"></td>
+								<td th:utext="${billInfo.countService + ' x'}"></td>
+								<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(billInfo.service.priceService), '.00', ''), '$', '')}"></td>
+								<td th:utext="${billInfo.employee.nameEmployee}"></td>
 							</tr>
 						</tbody>
 					</table>
@@ -149,9 +234,10 @@
 								<button type="button" class="btn btn-dark btn-change-chair">Chuyển ghế</button>
 							</div>
 							<div class="col-sm-7">
-								<select class="form-control form-control-sm form-selection-chair">
-									<option>Ghế 1</option>
-									<option>Ghế 10</option>
+								<select class="form-control form-control-sm form-selection-chair" name="selectorChair">
+									<option th:each="chair : ${chairLst}"
+										th:value="${chair.idChair}" th:utext="${chair.nameChair}">
+									</option>
 								</select>
 							</div>
 						</div>
@@ -167,7 +253,7 @@
 												<label class="label-service-pay" for="sel1">Giảm giá:</label>
 											</div>
 											<div class="col-sm-7">
-												<input class="form-control service-count-input" type="number" value="0" id="example-number-input">
+												<input class="form-control service-count-input" type="number" min="0" max="100" value="0" id="example-number-input">
 												<label class="label-service-count" for="sel1">%</label>
 											</div>
 										</div>
@@ -181,7 +267,7 @@
 												<label class="label-service-pay" for="sel1">Tổng tiền:</label>
 											</div>
 											<div class="col-sm-7">
-												<input type="text" readonly class="form-control textbox-common" id="usr" value="1.050.000 vnd">
+												<input type="text" readonly class="form-control textbox-common" id="total_price" th:value="${#strings.replace(#strings.replace(#numbers.formatCurrency(totalPrice), '.00', ''), '$', '')+ ' vnđ'}">
 										</div>
 										</div>
 									</div>
@@ -197,6 +283,29 @@
 		</div>
 	</div>
 </div>
+
+	<!-- switch chair Modal HTML -->
+	<div id="switchChairModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/switch_chair}" method="get">
+					<input type="hidden" name="chairOld" id="idchairOld" value="1">
+					<input type="hidden" name="chairNew" id="idchairNew" value="9">
+					<div class="modal-header">
+						<h4 class="modal-title">Chuyển đổi ghế!</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p>Bạn muốn chuyển <b id="chairNameOld"></b> sang <b id="chairNameNew"></b> ?</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-success" value="Chuyển">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
 </body>
 </html>

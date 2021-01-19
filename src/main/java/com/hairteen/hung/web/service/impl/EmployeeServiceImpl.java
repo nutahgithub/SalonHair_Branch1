@@ -55,7 +55,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public Employee getOneEmployeeByID(Integer id) {
-        return employeeRespository.findById(id).get();
+        Employee employeeTemp = employeeRespository.findById(id).get();
+        employeeTemp.setBillInfos(null);
+        return employeeTemp;
     }
 
     @Override
@@ -78,7 +80,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
 	@Override
 	public void editEmployee(EmployeeEditForm employeeForm, String accountId) {
-	    Employee employee = this.getOneEmployeeByID(employeeForm.getIdEmployee());
+	    Employee employee = employeeRespository.findById(employeeForm.getIdEmployee()).get();
 		Date date = new Date();
         Date birthDate;
         try {
@@ -96,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public void deleteEmployee(Integer id, String accountId) {
-        Employee employee = this.getOneEmployeeByID(id);
+        Employee employee = employeeRespository.findById(id).get();
         Date deleteTsamp = new Date();
         employee.setDeleteTsamp(deleteTsamp);
         employee.setDeleteId(accountId);

@@ -1,10 +1,12 @@
 package com.hairteen.hung.web.entity;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +45,9 @@ public class Chair {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
+
+    @OneToMany(mappedBy = "chair")
+    private Collection<Bill> bills;
 
     public String getNameChair() {
         return nameChair;
@@ -110,5 +115,17 @@ public class Chair {
 
     public Integer getIdChair() {
         return idChair;
+    }
+
+    public Collection<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(Collection<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public void setIdChair(Integer idChair) {
+        this.idChair = idChair;
     }
 }

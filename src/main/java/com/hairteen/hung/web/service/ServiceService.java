@@ -73,4 +73,12 @@ public interface ServiceService {
      * @return Service
      */
     Service getServiceByID(Integer id);
+    
+    /**
+     * Get service by type.
+     * 
+     * @param serviceTypeId
+     * @return
+     */
+    List<Service> getServiceByType(Integer serviceTypeId);
 }

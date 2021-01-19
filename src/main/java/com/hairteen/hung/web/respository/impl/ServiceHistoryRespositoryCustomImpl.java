@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hairteen.hung.web.entity.Service;
 import com.hairteen.hung.web.entity.ServiceHistory;
+import com.hairteen.hung.web.entity.ServiceType;
 import com.hairteen.hung.web.respository.ServiceHistoryRespositoryCustom;
 import com.hairteen.hung.web.utils.ConstantDefine;
 
@@ -27,9 +28,14 @@ public class ServiceHistoryRespositoryCustomImpl implements ServiceHistoryRespos
             .append(    "sh ")
             .append("from ")
             .append(    Service.class.getName()).append(" sv, ")
-            .append(    ServiceHistory.class.getName()).append(" sh ")
+            .append(    ServiceHistory.class.getName()).append(" sh, ")
+            .append(    ServiceType.class.getName()).append(" st ")
             .append("Where ")
-            .append("sv.idService = sh.service.idService ");
+            .append(    "sv.idService = sh.service.idService ")
+            .append(    "and sv.serviceType.idServiceType = st.idServiceType ")
+            .append(    "and sv.deleteTsamp IS NULL ")
+            .append(    "and st.deleteTsamp IS NULL ")
+            .append(    "and sh.deleteTsamp IS NULL ");
 
     @Autowired
     private EntityManager entityManager;

@@ -26,15 +26,38 @@ public interface ServiceRespository extends JpaRepository<Service, Integer>{
      * Find all Service page.
      * 
      */
-    @Query("SELECT sv from Service sv where sv.deleteTsamp IS NULL")
+    @Query("SELECT sv "
+            + "from "
+            + "Service sv, "
+            + "ServiceType st "
+            + "where "
+            + "sv.serviceType.idServiceType = st.idServiceType "
+            + "and st.deleteTsamp IS NULL "
+            + "and sv.deleteTsamp IS NULL")
     Page<Service> findAll(Pageable pageable);
 
     /**
      * Get list all Service.
      * 
      */
-    @Query("SELECT sv from Service sv where sv.deleteTsamp IS NULL")
+    @Query("SELECT sv "
+            + "from "
+            + "Service sv, "
+            + "ServiceType st "
+            + "where "
+            + "sv.serviceType.idServiceType = st.idServiceType "
+            + "and st.deleteTsamp IS NULL "
+            + "and sv.deleteTsamp IS NULL")
     List<Service> findAll();
+
+    @Query("SELECT sv "
+            + "from Service sv, "
+            + "ServiceType st "
+            + "where sv.serviceType = :serviceType "
+            + "and sv.serviceType.idServiceType = st.idServiceType "
+            + "and st.deleteTsamp IS NULL "
+            + "and sv.deleteTsamp IS NULL")
+    List<Service> findAll(ServiceType serviceType);
 
     /**
      * Get all service by service type.
@@ -42,7 +65,13 @@ public interface ServiceRespository extends JpaRepository<Service, Integer>{
      * @param serviceType
      * @return
      */
-    @Query("SELECT sv from Service sv where sv.serviceType = :serviceType and sv.deleteTsamp IS NULL")
+    @Query("SELECT sv "
+            + "from Service sv, "
+            + "ServiceType st "
+            + "where sv.serviceType = :serviceType "
+            + "and sv.serviceType.idServiceType = st.idServiceType "
+            + "and st.deleteTsamp IS NULL "
+            + "and sv.deleteTsamp IS NULL")
     List<Service> findByServiceType(ServiceType serviceType);
 
     /**
@@ -52,6 +81,13 @@ public interface ServiceRespository extends JpaRepository<Service, Integer>{
      * @param serviceType
      * @return
      */
-    @Query("SELECT sv from Service sv where sv.serviceType = :serviceType and sv.deleteTsamp IS NULL")
+    @Query("SELECT sv "
+            + "from Service sv, "
+            + "ServiceType st "
+            + "where "
+            + "sv.serviceType = :serviceType "
+            + "and sv.serviceType.idServiceType = st.idServiceType "
+            + "and st.deleteTsamp IS NULL "
+            + "and sv.deleteTsamp IS NULL")
     Page<Service> findAll(Pageable pageable, ServiceType serviceType);
 }

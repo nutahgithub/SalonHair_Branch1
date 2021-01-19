@@ -4,10 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "T_BILL_INFO")
@@ -17,17 +21,20 @@ public class BillInfo {
     @Column(name = "ID_BILL_INFO")
     private Integer idBillInfo;
 
-    @Column(name = "ID_BILL")
+    @Transient
     private Integer idBill;
 
-    @Column(name = "ID_SERVICE")
+    @Transient
     private Integer idService;
 
-    @Column(name = "ID_EMPLOYEE")
+    @Transient
     private Integer idEmployee;
 
     @Column(name = "COUNT_SERVICE")
     private Integer countService;
+
+    @Column(name = "REGISTER_ID")
+    private String registerId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "REGISTER_TSTAMP")
@@ -46,6 +53,21 @@ public class BillInfo {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
+
+    // Co nhiu service trong bill info.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_SERVICE", nullable = false)
+    private Service service;
+    
+    // Co nhiu employee trong bill info.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_EMPLOYEE", nullable = false)
+    private Employee employee;
+    
+    // Co nhiu Bill trong bill info.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_BILL", nullable = false)
+    private Bill bill;
 
     public Integer getIdBill() {
         return idBill;
@@ -121,5 +143,41 @@ public class BillInfo {
 
     public Integer getIdBillInfo() {
         return idBillInfo;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Bill getBill() {
+        return bill;
+    }
+
+    public void setBill(Bill bill) {
+        this.bill = bill;
+    }
+
+    public void setIdBillInfo(Integer idBillInfo) {
+        this.idBillInfo = idBillInfo;
+    }
+
+    public String getRegisterId() {
+        return registerId;
+    }
+
+    public void setRegisterId(String registerId) {
+        this.registerId = registerId;
     }
 }

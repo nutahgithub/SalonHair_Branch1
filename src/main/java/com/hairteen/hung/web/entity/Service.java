@@ -67,6 +67,9 @@ public class Service {
     @OneToMany(mappedBy = "service")
     private Collection<ServiceHistory> serviceHistorys;
 
+    @OneToMany(mappedBy = "service")
+    private Collection<BillInfo> billInfos;
+
     @Transient
     private Integer idServiceType;
 
@@ -188,6 +191,14 @@ public class Service {
 
     public void setServiceHistorys(Collection<ServiceHistory> serviceHistorys) {
         this.serviceHistorys = serviceHistorys;
+    }
+
+    public Collection<BillInfo> getBillInfos() {
+        return billInfos;
+    }
+
+    public void setBillInfos(Collection<BillInfo> billInfos) {
+        this.billInfos = billInfos;
     }
 
     public Service(Integer idService, String nameService, Float priceService, Integer countIn, Integer countOut,

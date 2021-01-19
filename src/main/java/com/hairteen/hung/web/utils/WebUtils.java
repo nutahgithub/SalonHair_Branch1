@@ -7,6 +7,12 @@ import org.springframework.security.core.userdetails.User;
 
 public class WebUtils {
 
+    /**
+     * to String.
+     * 
+     * @param user
+     * @return
+     */
     public static String toString(User user) {
 
         StringBuilder sb = new StringBuilder();

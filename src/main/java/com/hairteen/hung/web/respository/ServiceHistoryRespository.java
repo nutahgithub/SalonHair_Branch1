@@ -25,13 +25,27 @@ public interface ServiceHistoryRespository extends JpaRepository<ServiceHistory,
      * Find all ServiceHistory page.
      * 
      */
-    @Query("SELECT sh from ServiceHistory sh where sh.deleteTsamp IS NULL")
+    @Query("SELECT sh "
+            + "from ServiceHistory sh, ServiceType st, Service sv "
+            + "where "
+            + "sh.service.idService = sv.idService "
+            + "and sv.serviceType.idServiceType = st.idServiceType "
+            + "and sv.deleteTsamp IS NULL "
+            + "and st.deleteTsamp IS NULL "
+            + "and sh.deleteTsamp IS NULL")
     Page<ServiceHistory> findAll(Pageable pageable);
 
     /**
      * Get list all ServiceHistory.
      * 
      */
-    @Query("SELECT sh from ServiceHistory sh where sh.deleteTsamp IS NULL")
+    @Query("SELECT sh "
+            + "from ServiceHistory sh, ServiceType st, Service sv "
+            + "where "
+            + "sh.service.idService = sv.idService "
+            + "and sv.serviceType.idServiceType = st.idServiceType "
+            + "and sv.deleteTsamp IS NULL "
+            + "and st.deleteTsamp IS NULL "
+            + "and sh.deleteTsamp IS NULL")
     List<ServiceHistory> findAll();
 }

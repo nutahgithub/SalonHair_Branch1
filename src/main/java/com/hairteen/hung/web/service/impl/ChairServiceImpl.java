@@ -1,6 +1,7 @@
 package com.hairteen.hung.web.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,16 @@ public class ChairServiceImpl implements ChairService{
 
     @Autowired
     private ChairRespository chairRespository;
+
+    /**
+     * Chair not empty.
+     */
+    private static final Integer STATUS_CHAIR_ACTIVE = 1;
+
+    /**
+     * Chair is empty.
+     */
+    private static final Integer STATUS_CHAIR_INACTIVE = 0;
 
     @Override
     public List<Chair> getAllChair() {
@@ -51,6 +62,25 @@ public class ChairServiceImpl implements ChairService{
             }
         }
         return chairGroup;
+    }
+
+    @Override
+    public Chair getChairById(Integer idChair) {
+        return chairRespository.findById(idChair).get();
+    }
+
+    @Override
+    public void updateStatusChair(Integer idChair, String accountId) {
+        Chair chair = this.getChairById(idChair);
+        // Check status chair.
+        if (chair.getStatusChair() == STATUS_CHAIR_INACTIVE) {
+            chair.setStatusChair(STATUS_CHAIR_ACTIVE);
+        } else {
+            chair.setStatusChair(STATUS_CHAIR_INACTIVE);
+        }
+        chair.setUpdateTsamp(new Date());
+        chair.setUpdateId(accountId);
+        chairRespository.save(chair);
     }
 
 }
