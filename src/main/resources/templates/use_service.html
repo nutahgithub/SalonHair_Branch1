@@ -37,7 +37,7 @@
 			}
 			$.ajax({
 				type: "post",
-				url: "/add_bill_info_to_bill",
+				url: "/hairteenhung/add_bill_info_to_bill",
 				data: { idChair: idChair, idService: idService, idEmployee: idEmployee, countService: countService,} ,
 				/* dataType: 'json', */
 				contentType: 'application/json; charset=utf-8',
@@ -78,7 +78,7 @@
 			var serviceTypeId = $(this).children("option:selected").val();
 			$.ajax({
 				type: "post",
-				url: "/get_service",
+				url: "/hairteenhung/get_service",
 				data: { serviceTypeId: serviceTypeId} ,
 				/* dataType: 'json', */
 				contentType: 'application/json; charset=utf-8',
