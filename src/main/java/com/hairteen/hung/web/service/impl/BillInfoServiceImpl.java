@@ -111,4 +111,19 @@ public class BillInfoServiceImpl implements BillInfoService{
         return billInfoRespository.findById(idBillInfo).get();
     }
 
+    @Override
+    public List<BillInfo> getAllBillInfoByBillId(Integer idBill) {
+        return billInfoRespositoryCustom.getAllBillInfoByBillId(idBill);
+    }
+
+    @Override
+    public Float totalPriceByIdBill(Integer idBill) {
+        List<BillInfo> billInfos = billInfoRespositoryCustom.getAllBillInfoByBillId(idBill);
+        Float totalPrice = 0f;
+        for (BillInfo billInfo : billInfos) {
+            totalPrice = totalPrice + billInfo.getCountService() * billInfo.getService().getPriceService();
+        }
+        return totalPrice;
+    }
+
 }

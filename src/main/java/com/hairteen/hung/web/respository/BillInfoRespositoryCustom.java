@@ -18,6 +18,14 @@ public interface BillInfoRespositoryCustom {
     List<BillInfo> getAllBillInfoByBill(Integer idChair);
 
     /**
+     * Get all bill info by bill id.
+     * 
+     * @param idBill
+     * @return
+     */
+    List<BillInfo> getAllBillInfoByBillId(Integer idBill);
+
+    /**
      * Get bill info exist.
      * 
      * @param idChair
