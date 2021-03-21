@@ -14,6 +14,11 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 	<script>
 	$(document).ready(function(){
+		
+		var DOCSO=function(){var t=["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" mươi",1==e&&(o+=" mốt")):1==a?(o=" mười",1==e&&(o+=" một")):n&&e>0&&(o=" lẻ"),5==e&&a>=1?o+=" lăm":4==e&&a>=1?o+=" tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" tỷ";while(r>0);return n.trim()}}}();
+
+		
+		// Click button change service
 		$(".btn-change-chair").click(function(){
 			$("#switchChairModal").modal('show');
 			var chairOldId = "[[${chair.idChair}]]";
@@ -25,6 +30,28 @@
 			$("#chairNameOld").html(chairOldName);
 			$("#chairNameNew").html(chairNewName);
 		});
+
+		// Click button pay service chairNamePay
+		$(".btn-pay-service").click(function(){
+			$("#payServiceModal").modal('show');
+			var chairIdPay = "[[${chair.idChair}]]";
+			var chairNamePay = "[[${chair.nameChair}]]";
+			var totalMoneyBill = $("#totalPriceHidden").val();
+			var discountPay = $("#discount-total-input").val();
+			var totalPay = totalMoneyBill - (totalMoneyBill * discountPay/100);
+			var totalPayStr = DOCSO.doc(totalPay) + " đồng";
+
+			// input hidden
+			$("#idchairPay").val(chairIdPay);
+			$("#idDiscountPay").val(discountPay);
+
+			$("#chairNamePay").html(chairNamePay);
+			$("#total_bill_service").html(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalMoneyBill));
+			$("#discount_bill").html(discountPay);
+			$("#total_pay_service").html(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPay));
+			$("#total_pay_service_str").html(totalPayStr);
+		});
+		
 		// Click button Add service to bill
 		$("#button_add_sv").click(function(){
 			var idChair = $("#chairIdUse").val();
@@ -37,7 +64,7 @@
 			}
 			$.ajax({
 				type: "post",
-				url: "/add_bill_info_to_bill",
+				url: "/hairteenhung/add_bill_info_to_bill",
 				data: { idChair: idChair, idService: idService, idEmployee: idEmployee, countService: countService,} ,
 				/* dataType: 'json', */
 				contentType: 'application/json; charset=utf-8',
@@ -52,19 +79,21 @@
  							$("tbody#body_list_service").append("<tr> ")
  							.append("<td>" + billInfoList[i].index + "</td>")
  							.append("<td>" + billInfoList[i].nameService + "</td>")
- 							.append("<td>" + billInfoList[i].countService + " x</td>")
  							.append("<td>" + billInfoList[i].priceService + "</td>")
+ 							.append("<td>x " + billInfoList[i].countService + "</td>")
+ 							.append("<td>" + billInfoList[i].countService*billInfoList[i].priceServiceNumber + "</td>")
  							.append("<td>" + billInfoList[i].employeeName + "</td>")
  							.append("</tr>");
  						}
 						$("#total_price").val(myJSON.totalPrice);
 						$("label#time_check_in").html('');;
 						$("label#time_check_in").append(myJSON.timeCheckIn);
+						$("#totalPriceHidden").val(myJSON.totalPriceNumber);
 					} catch(e) {
 						alert('Vui lòng chọn đầy đủ thông tin!');
 					}
 				},
-				error: function(){						
+				error: function(){
 					alert('Lỗi hệ thống, Hãy thử lại sau!');
 				}
 			});
@@ -78,7 +107,7 @@
 			var serviceTypeId = $(this).children("option:selected").val();
 			$.ajax({
 				type: "post",
-				url: "/get_service",
+				url: "/hairteenhung/get_service",
 				data: { serviceTypeId: serviceTypeId} ,
 				/* dataType: 'json', */
 				contentType: 'application/json; charset=utf-8',
@@ -89,7 +118,9 @@
 						var i;
 						for (i = 0; i < serverList.length; i++) {
 							//console.log(serverList[i].nameService);
-							$("#service-use-select").append("<option value=" + serverList[i].idService +">" + serverList[i].nameService + "</option>");
+							$("#service-use-select").append("<option value=" + serverList[i].idService +">" 
+									+ serverList[i].nameService + " (" 
+											+ new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(serverList[i].priceService) + ")</option>");
 						}
 					} catch(e) {
 						alert('Vui lòng chọn loại dịch vụ!');
@@ -194,6 +225,7 @@
 									<div class="col-sm-12">
 										<label style="font-size: 20px; color: #FFCE2B;" for="time-in" th:utext="${chair.nameChair}"></label>
 										<input type="hidden" id="chairIdUse" th:value="${chair.idChair}">
+										<input type="hidden" id="totalPriceHidden" th:value="${totalPrice}">
 									</div>
 								</div>
 							</div>
@@ -210,8 +242,9 @@
 							<tr>
 								<th>STT</th>
 								<th>Tên dịch vụ</th>
+								<th>Đơn giá(vnđ)</th>
 								<th>Số lượng</th>
-								<th>Giá 1 d.vụ(VND)</th>
+								<th>Thành tiền(vnđ)</th>
 								<th>Nhân viên</th>
 							 </tr>
 						  </thead>
@@ -219,8 +252,9 @@
 							<tr th:each ="billInfo : ${billInfos}">
 								<td th:utext="${billInfoStat.index + 1}"></td>
 								<td th:utext="${billInfo.service.nameService}"></td>
-								<td th:utext="${billInfo.countService + ' x'}"></td>
 								<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(billInfo.service.priceService), '.00', ''), '$', '')}"></td>
+								<td th:utext="${'x ' + billInfo.countService}"></td>
+								<td th:text="${#strings.replace(#strings.replace(#numbers.formatCurrency(billInfo.service.priceService*billInfo.countService), '.00', ''), '$', '')}"></td>
 								<td th:utext="${billInfo.employee.nameEmployee}"></td>
 							</tr>
 						</tbody>
@@ -253,7 +287,7 @@
 												<label class="label-service-pay" for="sel1">Giảm giá:</label>
 											</div>
 											<div class="col-sm-7">
-												<input class="form-control service-count-input" type="number" min="0" max="100" value="0" id="example-number-input">
+												<input class="form-control service-count-input" type="number" min="0" max="100" value="0" id="discount-total-input">
 												<label class="label-service-count" for="sel1">%</label>
 											</div>
 										</div>
@@ -289,8 +323,8 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form th:action="@{/switch_chair}" method="get">
-					<input type="hidden" name="chairOld" id="idchairOld" value="1">
-					<input type="hidden" name="chairNew" id="idchairNew" value="9">
+					<input type="hidden" name="chairOld" id="idchairOld">
+					<input type="hidden" name="chairNew" id="idchairNew">
 					<div class="modal-header">
 						<h4 class="modal-title">Chuyển đổi ghế!</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -301,6 +335,52 @@
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
 						<input type="submit" class="btn btn-success" value="Chuyển">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Pay service Modal HTML -->
+	<div id="payServiceModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/pay_bill}" method="get">
+					<input type="hidden" name="chairPay" id="idchairPay">
+					<input type="hidden" name="discountPay" id="idDiscountPay">
+					<div class="modal-header">
+						<h4 class="modal-title">Bạn chắc chắn Thanh Toán!</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<table>
+							<tr style="border-bottom-style: solid;">
+								<td class="fas fa-couch">&nbsp;Ghế thanh toán</td>
+								<td>&nbsp;:&nbsp;</td>
+								<td>&nbsp;<b id="chairNamePay"></b></td>
+							</tr>
+							<tr style="height: 15px;">
+							</tr>
+							<tr>
+								<td>Tổng tiền dịch vụ</td>
+								<td>&nbsp;:&nbsp;</td>
+								<td>&nbsp;<b id="total_bill_service"></b></td>
+							</tr>
+							<tr>
+								<td>Giảm giá</td>
+								<td>&nbsp;:&nbsp;</td>
+								<td>&nbsp;<b id="discount_bill"></b>%</td>
+							</tr>
+							<tr>
+								<td>Tổng thanh toán</td>
+								<td>&nbsp;:&nbsp;</td>
+								<td>&nbsp;<b style="color: red" id="total_pay_service"></b>&nbsp;( <i id="total_pay_service_str"></i> )</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Hủy">
+						<input type="submit" class="btn btn-success" value="Thanh toán">
 					</div>
 				</form>
 			</div>

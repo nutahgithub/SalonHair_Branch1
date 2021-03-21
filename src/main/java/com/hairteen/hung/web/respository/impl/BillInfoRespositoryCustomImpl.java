@@ -71,6 +71,27 @@ public class BillInfoRespositoryCustomImpl implements BillInfoRespositoryCustom{
             .append(    "and ch.deleteTsamp IS NULL ")
             .append("ORDER BY bi.registerTsamp ");
 
+    
+    /* SQl get bill info by bill id */
+    private final StringBuilder SQL_FIND_BILL_INFO_OF_BILL_ID = new StringBuilder()
+            .append("Select ")
+            .append(    "bi ")
+            .append("from ")
+            .append(    Service.class.getName()).append(" sv, ")
+            .append(    BillInfo.class.getName()).append(" bi, ")
+            .append(    Bill.class.getName()).append(" b, ")
+            .append(    Employee.class.getName()).append(" em ")
+            .append("Where ")
+            .append(    "b.idBill = :idBill ")
+            .append(    "and bi.bill.idBill = b.idBill ")
+            .append(    "and bi.service.idService = sv.idService ")
+            .append(    "and bi.employee.idEmployee = em.idEmployee ")
+            .append(    "and sv.deleteTsamp IS NULL ")
+            .append(    "and bi.deleteTsamp IS NULL ")
+            .append(    "and b.deleteTsamp IS NULL ")
+            .append(    "and em.deleteTsamp IS NULL ")
+            .append("ORDER BY bi.registerTsamp ");
+
     @Autowired
     private EntityManager entityManager;
 
@@ -101,6 +122,17 @@ public class BillInfoRespositoryCustomImpl implements BillInfoRespositoryCustom{
             return null;
         }
         return billInfo;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BillInfo> getAllBillInfoByBillId(Integer idBill) {
+        StringBuilder sql = this.SQL_FIND_BILL_INFO_OF_BILL_ID;
+        Query query = entityManager.createQuery(sql.toString(), BillInfo.class);
+        query.setParameter("idBill", idBill);
+
+        List<BillInfo> billInfos = query.getResultList();
+        return billInfos;
     }
 
 }

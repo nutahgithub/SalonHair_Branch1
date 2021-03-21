@@ -1,5 +1,6 @@
 package com.hairteen.hung.web.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
@@ -63,14 +64,24 @@ public class Bill {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
-    
+
     @OneToMany(mappedBy = "bill")
     private Collection<BillInfo> billInfos;
-    
+
     // Co nhiu chair trong bill.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CHAIR", nullable = false)
     private Chair chair;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_CUSTOMER", nullable = false)
+    private Customer customer;
+
+    @Transient
+    private String dateCheckOutFormat;
+
+    @Transient
+    private String dateCheckInFormat;
 
     public Date getDateCheckIn() {
         return dateCheckIn;
@@ -174,5 +185,47 @@ public class Bill {
 
     public void setRegisterId(String registerId) {
         this.registerId = registerId;
+    }
+
+    public Integer getDisCount() {
+        return disCount;
+    }
+
+    public void setDisCount(Integer disCount) {
+        this.disCount = disCount;
+    }
+
+    public Float getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(Float totalMoney) {
+        this.totalMoney = totalMoney;
+    }
+
+    public String getDateCheckOutFormat() {
+        SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return this.dateCheckOut != null?sm.format(this.dateCheckOut):"";
+    }
+
+    public void setDateCheckOutFormat(String dateCheckOutFormat) {
+        this.dateCheckOutFormat = dateCheckOutFormat;
+    }
+
+    public String getDateCheckInFormat() {
+        SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return this.dateCheckIn != null?sm.format(this.dateCheckIn):"";
+    }
+
+    public void setDateCheckInFormat(String dateCheckInFormat) {
+        this.dateCheckInFormat = dateCheckInFormat;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

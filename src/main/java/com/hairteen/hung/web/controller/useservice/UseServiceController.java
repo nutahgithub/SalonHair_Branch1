@@ -110,6 +110,33 @@ public class UseServiceController {
     }
 
     /**
+     * Switch chair.
+     * 
+     * @param model
+     * @param chair
+     * @return
+     */
+    @RequestMapping(value = "/pay_bill", method = RequestMethod.GET)
+    public String payBill(Model model,
+            @RequestParam(value = "chairPay",required = false) String chairPay,
+            @RequestParam(value = "discountPay",required = false) String discountPay) {
+
+        Integer idChairPay = ConvertDataUtils.convertStringToNumber(chairPay);
+        Integer discountPayValue = ConvertDataUtils.convertStringToNumber(discountPay);
+        if (idChairPay != null && discountPayValue != null) {
+            Float totalPrice = billInfoService.totalPrice(idChairPay);
+            totalPrice = totalPrice - (totalPrice * discountPayValue/100);
+            if (totalPrice != 0) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String user = authentication.getName();
+                billService.payBill(idChairPay, discountPayValue, totalPrice, user);
+            }
+            return "redirect:/use_service_view?chair=" + idChairPay;
+        }
+        return "error_system";
+    }
+
+    /**
      * Get service when select service type.
      * 
      * @param serviceTypeId
@@ -128,6 +155,7 @@ public class UseServiceController {
                 JSONObject json = new JSONObject();
                 json.put("idService", service.getIdService());
                 json.put("nameService", service.getNameService());
+                json.put("priceService", service.getPriceService());
                 jArray.put(json);
             }
             jsonAll.put("listService", jArray);
@@ -163,7 +191,9 @@ public class UseServiceController {
         BillInfo billInfo = billInfoService.addBillInfoToBill(idChair, user, idService, idEmployee, countService);
 
         List<BillInfo> billInfoList = billInfoService.getAllBillInfoByBill(idChair);
-        Locale localeEN = new Locale("en", "EN");
+        Float totalPrice = billInfoService.totalPrice(idChair);
+
+        Locale localeEN = new Locale("vi", "VN");
         NumberFormat en = NumberFormat.getInstance(localeEN);
 
         JSONObject jsonAll = new JSONObject();
@@ -175,11 +205,13 @@ public class UseServiceController {
             json.put("nameService", bi.getService().getNameService());
             json.put("countService", bi.getCountService());
             json.put("priceService", en.format(bi.getService().getPriceService()));
+            json.put("priceServiceNumber", bi.getService().getPriceService());
             json.put("employeeName", bi.getEmployee().getNameEmployee());
             jArray.put(json);
         }
         jsonAll.put("billInfoList", jArray);
-        jsonAll.put("totalPrice", en.format(billInfoService.totalPrice(idChair)) + " vnđ");
+        jsonAll.put("totalPrice", en.format(totalPrice) + " vnđ");
+        jsonAll.put("totalPriceNumber", totalPrice);
         jsonAll.put("timeCheckIn", DateUtils.formatDateToHM(billInfo.getBill().getDateCheckIn()));
         return jsonAll.toString();
     }

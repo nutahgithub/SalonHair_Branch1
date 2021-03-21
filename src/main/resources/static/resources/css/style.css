@@ -63,10 +63,11 @@ body{
     color: #42413D;
 }
 .btn-chair:hover{
-	background-color: #d07e27;
+	color: white;
 }
 .btn-chair-click{
 	background-color: #d07e27;
+	color: white;
 }
 .btn-chair-active{
 	background-color: #2A9D8F;
@@ -114,7 +115,7 @@ body{
 }
 
 .body-list{
-    background-color: #959492;
+    background-color: #feffff;
 }
 
 .form-selection-chair{
@@ -501,4 +502,24 @@ table.table1 .avatar {
 }
 .tservicehistory-date{
 	width: 22%;
+}
+
+/* List revenue */
+.trevenue-id{
+	width: 12%;
+}
+.trevenue-datecheckin{
+	width: 20%;
+}
+.trevenue-datecheckout{
+	width: 20%;
+}
+.trevenue-discount{
+	width: 15%;
+}
+.trevenue-totalprice{
+	width: 23%;
+}
+.trevenue-details{
+	width: 10%;
 }
