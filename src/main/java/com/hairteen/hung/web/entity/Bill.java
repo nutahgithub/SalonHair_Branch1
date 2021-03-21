@@ -64,14 +64,18 @@ public class Bill {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DELETE_TSTAMP")
     private Date deleteTsamp;
-    
+
     @OneToMany(mappedBy = "bill")
     private Collection<BillInfo> billInfos;
-    
+
     // Co nhiu chair trong bill.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CHAIR", nullable = false)
     private Chair chair;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_CUSTOMER", nullable = false)
+    private Customer customer;
 
     @Transient
     private String dateCheckOutFormat;
@@ -215,5 +219,13 @@ public class Bill {
 
     public void setDateCheckInFormat(String dateCheckInFormat) {
         this.dateCheckInFormat = dateCheckInFormat;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }
